@@ -11,13 +11,25 @@ namespace WebShopRestService.Models
 
         [Required(ErrorMessage = "Category name is required.")]
         [StringLength(100, MinimumLength = 2, ErrorMessage = "Category name must be between 2 and 100 characters long.")]
+        [RegularExpression(@"^[a-zA-Z0-9\s\-_]+$", ErrorMessage = "Invalid category name format. Only letters, numbers, spaces, hyphens, and underscores are allowed.")]
         public string Name { get; set; }
 
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
+        [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
-        [NotMapped] // instructing the framework to ignore the specified property when generating the database schema
+        [NotMapped] // Instructing the framework to ignore the specified property when generating the database schema
+        [EnsureNonEmptyCollection(ErrorMessage = "At least one product is required in the category.")]
         public ICollection<Product> Products { get; set; }
+        // Custom validation attribute to ensure a collection is not empty
+        public class EnsureNonEmptyCollectionAttribute : ValidationAttribute
+        {
+            public override bool IsValid(object value)
+            {
+                var collection = value as ICollection<Product>;
+                return collection != null && collection.Any();
+            }
+        }
     }
 
     // In the code above, the Products collection is present in the Category class, but it will not be represented in the database.

@@ -24,6 +24,8 @@ namespace WebShopRestService.Models
         public string PostalCode { get; set; }
 
         [Required(ErrorMessage = "Country is required.")]
+        [StringLength(56, ErrorMessage = "Country name cannot be longer than 56 characters.")] // Assuming a max length for country names
+        [RegularExpression(@"^[a-zA-Z\s-]+$", ErrorMessage = "Invalid country name format.")]
         public string Country { get; set; }
 
         [Required(ErrorMessage = "At least one customer is required.")]

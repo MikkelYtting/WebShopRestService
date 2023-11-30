@@ -11,6 +11,12 @@ namespace WebShopRestService.Interfaces
         Task AddOrderAsync(OrderTable order);
         Task UpdateOrderAsync(OrderTable order);
         Task DeleteOrderAsync(int orderId);
-        // Additional methods can be added as per business requirements
+
+        /// <summary>
+        /// Finds an order that is similar to the provided order.
+        /// </summary>
+        /// <param name="order">The order to compare with existing orders.</param>
+        /// <returns>A similar order if found, otherwise null.</returns>
+        Task<IEnumerable<OrderTable>> GetOrdersByCustomerAndDateAsync(int customerId, DateTime start, DateTime end);
     }
 }

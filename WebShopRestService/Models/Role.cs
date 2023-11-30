@@ -10,7 +10,7 @@ namespace WebShopRestService.Models
         public string Name { get; set; }
         public int AccessLevel { get; set; }
 
-        // Roller er knyttet til mange brugeroplysninger.
+        // Roller er knyttet til flere bruger. Roler kan eksistere uden at være linked til en bruger
         public ICollection<UserCredential> UserCredentials { get; set; }
     }
 }
