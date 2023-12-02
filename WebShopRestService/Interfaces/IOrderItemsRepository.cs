@@ -4,7 +4,7 @@ using WebShopRestService.Models;
 
 namespace WebShopRestService.Interfaces
 {
-    public interface IOrderItemRepository
+    public interface IOrderItemsRepository
     {
         Task<IEnumerable<OrderItem>> GetAllOrderItemsAsync();
         Task<OrderItem> GetOrderItemByIdAsync(int orderItemId);

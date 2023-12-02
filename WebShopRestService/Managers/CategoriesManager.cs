@@ -4,41 +4,41 @@ using WebShopRestService.Models;
 
 namespace WebShopRestService.Managers
 {
-    public class CategoryManager
+    public class CategoriesManager
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ICategoriesRepository _categoryRepository;
 
-        public CategoryManager(ICategoryRepository categoryRepository)
+        public CategoriesManager(ICategoriesRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }
 
-        public IEnumerable<Category> GetAllCategories()
+        public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
         {
-            return _categoryRepository.GetAllCategories();
+            return await _categoryRepository.GetAllCategoriesAsync();
         }
 
-        public Category GetCategoryById(int categoryId)
+        public async Task<Category> GetCategoryByIdAsync(int categoryId)
         {
-            return _categoryRepository.GetCategoryById(categoryId);
+            return await _categoryRepository.GetCategoryByIdAsync(categoryId);
         }
 
-        public void AddCategory(Category category)
+        public async Task AddCategoryAsync(Category category)
         {
             // Additional business logic can be added here before adding the category
-            _categoryRepository.AddCategory(category);
+            await _categoryRepository.AddCategoryAsync(category);
         }
 
-        public void UpdateCategory(Category category)
+        public async Task UpdateCategoryAsync(Category category)
         {
             // Additional business logic can be added here before updating the category
-            _categoryRepository.UpdateCategory(category);
+            await _categoryRepository.UpdateCategoryAsync(category);
         }
 
-        public void DeleteCategory(int categoryId)
+        public async Task DeleteCategoryAsync(int categoryId)
         {
             // Additional business logic can be added here before deleting the category
-            _categoryRepository.DeleteCategory(categoryId);
+            await _categoryRepository.DeleteCategoryAsync(categoryId);
         }
         // Your manager class acts as a layer of abstraction over your repository.
         // It encapsulates how data operations are handled and provides a clear interface to the rest of your application.

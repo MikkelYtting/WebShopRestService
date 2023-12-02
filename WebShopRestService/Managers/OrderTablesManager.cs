@@ -10,12 +10,12 @@ namespace WebShopRestService.Managers
     /// <summary>
     /// Manages business logic operations for order tables.
     /// </summary>
-    public class OrderTableManager : IOrderTableManager
+    public class OrderTablesManager
     {
-        private readonly ICustomerRepository _customerRepository;
-        private readonly IAddressRepository _addressRepository;
-        private readonly IOrderTableRepository _orderTableRepository;
-        private readonly IProductRepository _productRepository;
+        private readonly ICustomersRepository _customerRepository;
+        private readonly IAddressesRepository _addressRepository;
+        private readonly IOrderTablesRepository _orderTableRepository;
+        private readonly IProductsRepository _productRepository;
 
         /// <summary>
         /// Constructs an OrderTableManager with required repositories.
@@ -24,15 +24,49 @@ namespace WebShopRestService.Managers
         /// <param name="addressRepository">Repository for address operations.</param>
         /// <param name="orderTableRepository">Repository for order table operations.</param>
         /// <param name="productRepository">Repository for product operations.</param>
-        public OrderTableManager(ICustomerRepository customerRepository,
-                                 IAddressRepository addressRepository,
-                                 IOrderTableRepository orderTableRepository,
-                                 IProductRepository productRepository)
+        public OrderTablesManager(ICustomersRepository customerRepository,
+                                 IAddressesRepository addressRepository,
+                                 IOrderTablesRepository orderTableRepository,
+                                 IProductsRepository productRepository)
         {
             _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
             _addressRepository = addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
             _orderTableRepository = orderTableRepository ?? throw new ArgumentNullException(nameof(orderTableRepository));
             _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
+        }
+
+
+        public async Task<IEnumerable<OrderTable>> GetAllOrdersAsync()
+        {
+            // You can add any business logic here if necessary
+            return await _orderTableRepository.GetAllOrdersAsync();
+        }
+
+        public async Task<OrderTable> GetOrderByIdAsync(int orderId)
+        {
+            // Add any pre-retrieval logic here
+            var order = await _orderTableRepository.GetOrderByIdAsync(orderId);
+            // Add any post-retrieval logic here
+            return order;
+        }
+
+        public async Task UpdateOrderAsync(OrderTable order)
+        {
+            // Add any validation or business logic before updating
+            await _orderTableRepository.UpdateOrderAsync(order);
+            // Add any logic after updating, if necessary
+        }
+
+        public async Task DeleteOrderAsync(int orderId)
+        {
+            // Add any logic needed before deletion
+            var order = await _orderTableRepository.GetOrderByIdAsync(orderId);
+            if (order == null)
+            {
+                throw new InvalidOperationException("Order not found.");
+            }
+            await _orderTableRepository.DeleteOrderAsync(order);
+            // Add any logic needed after deletion
         }
 
         /// <summary>
@@ -41,11 +75,11 @@ namespace WebShopRestService.Managers
         /// <param name="order">The order to validate and add.</param>
         public async Task ValidateAndAddOrderAsync(OrderTable order)
         {
-            ValidateCustomerExists(order.CustomerId);
-            ValidateAddressExists(order.DeliveryAddressId);
+            await ValidateCustomerExists(order.CustomerId);
+            await ValidateAddressExists(order.DeliveryAddressId);
             ValidateOrderDate(order.OrderDate);
             await ValidateDuplicateOrderAsync(order);
-            ValidateOrderItems(order.OrderItems);
+            await ValidateOrderItems(order.OrderItems);
 
             decimal calculatedTotal = CalculateOrderTotal(order.OrderItems);
             if (order.TotalAmount != calculatedTotal)
@@ -56,13 +90,15 @@ namespace WebShopRestService.Managers
             await _orderTableRepository.AddOrderAsync(order);
         }
 
+
         /// <summary>
         /// Checks if a customer with the given ID exists.
         /// </summary>
         /// <param name="customerId">The customer's ID to check.</param>
-        private void ValidateCustomerExists(int customerId)
+        private async Task ValidateCustomerExists(int customerId)
         {
-            if (!_customerRepository.Exists(customerId))
+            bool exists = await _customerRepository.Exists(customerId);
+            if (!exists) // This line checks if exists is false. The ! operator is a logical NOT operator, which inverts the value of exists
             {
                 throw new InvalidOperationException("Customer does not exist.");
             }
@@ -72,9 +108,10 @@ namespace WebShopRestService.Managers
         /// Checks if an address with the given ID exists.
         /// </summary>
         /// <param name="addressId">The address ID to check.</param>
-        private void ValidateAddressExists(int addressId)
+        private async Task ValidateAddressExists(int addressId)
         {
-            if (!_addressRepository.Exists(addressId))
+            bool addressExists = await _addressRepository.AddressExistsAsync(addressId);
+            if (!addressExists)
             {
                 throw new InvalidOperationException("Delivery address does not exist.");
             }
@@ -116,7 +153,7 @@ namespace WebShopRestService.Managers
         /// Validates the list of order items for an order.
         /// </summary>
         /// <param name="orderItems">The order items to validate.</param>
-        private void ValidateOrderItems(IEnumerable<OrderItem> orderItems)
+        private async Task ValidateOrderItems(IEnumerable<OrderItem> orderItems)
         {
             if (!orderItems.Any())
             {
@@ -125,7 +162,9 @@ namespace WebShopRestService.Managers
 
             foreach (var item in orderItems)
             {
-                if (!_productRepository.Exists(item.ProductId))
+                // Await the asynchronous operation and get the boolean result
+                bool productExists = await _productRepository.ProductExistsAsync(item.ProductId);
+                if (!productExists)  
                 {
                     throw new InvalidOperationException($"Product with ID {item.ProductId} does not exist.");
                 }
@@ -137,6 +176,7 @@ namespace WebShopRestService.Managers
             }
         }
 
+
         /// <summary>
         /// Calculates the total amount of an order based on its items.
         /// </summary>
@@ -147,40 +187,55 @@ namespace WebShopRestService.Managers
             return orderItems.Sum(item => item.Quantity * item.Price);
         }
 
+     
         /// <summary>
-        /// Compares two sets of order items to determine if they are identical.
+        /// Determines if two sequences of order items are identical by comparing their ProductId and Quantity.
         /// </summary>
-        /// <param name="items1">First set of order items to compare.</param>
-        /// <param name="items2">Second set of order items to compare.</param>
-        /// <returns>true if the order items are identical; otherwise, false.</returns>
+        /// <param name="items1">The first sequence of order items to compare.</param>
+        /// <param name="items2">The second sequence of order items to compare.</param>
+        /// <returns>True if both sequences contain the same items with the same quantities; otherwise, false.</returns>
         private bool DoOrderItemsMatch(IEnumerable<OrderItem> items1, IEnumerable<OrderItem> items2)
         {
+            // Sort both sequences to ensure items are in the same order for comparison
             var itemSet1 = items1.OrderBy(i => i.ProductId).ThenBy(i => i.Quantity);
             var itemSet2 = items2.OrderBy(i => i.ProductId).ThenBy(i => i.Quantity);
 
+            // Use a custom comparer to determine if both sequences are equal
             return itemSet1.SequenceEqual(itemSet2, new OrderItemComparer());
         }
 
         /// <summary>
-        /// A custom comparer for comparing order items.
+        /// A comparer to check if two order items are equal based on ProductId and Quantity.
         /// </summary>
         private class OrderItemComparer : IEqualityComparer<OrderItem>
         {
+            // Determines if two order items are equal by comparing ProductId and Quantity
             public bool Equals(OrderItem x, OrderItem y)
             {
                 return x.ProductId == y.ProductId && x.Quantity == y.Quantity;
             }
 
+            // Generates a hash code based on ProductId and Quantity
+            /// <summary>
+            /// Produces a hash code for an order item based on its ProductId and Quantity.
+            /// This hash code is used by hash-based collections to quickly organize and access objects.
+            /// </summary>
+            /// <param name="obj">The order item for which to generate a hash code.</param>
+            /// <returns>An integer hash code representing the order item.</returns>
             public int GetHashCode(OrderItem obj)
             {
-                unchecked // Overflow is fine, just wrap
+                unchecked // Allows overflow without throwing an exception, which is fine for hash codes
                 {
                     int hash = 17;
+                    // Multiply the hash by a prime number (23) and add the hash of the ProductId.
                     hash = hash * 23 + obj.ProductId.GetHashCode();
+                    // Multiply the hash by the same prime number (23) and add the hash of the Quantity.
                     hash = hash * 23 + obj.Quantity.GetHashCode();
                     return hash;
                 }
             }
+
         }
+
     }
 }

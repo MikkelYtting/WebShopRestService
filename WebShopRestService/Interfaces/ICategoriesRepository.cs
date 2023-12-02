@@ -4,7 +4,7 @@ using WebShopRestService.Models;
 
 namespace WebShopRestService.Interfaces
 {
-    public interface ICategoryRepository
+    public interface ICategoriesRepository
     {
         Task<IEnumerable<Category>> GetAllCategoriesAsync();
         Task<Category> GetCategoryByIdAsync(int categoryId);

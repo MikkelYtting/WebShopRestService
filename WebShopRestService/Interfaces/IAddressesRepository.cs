@@ -4,7 +4,7 @@ using WebShopRestService.Models;
 
 namespace WebShopRestService.Interfaces
 {
-    public interface IAddressRepository
+    public interface IAddressesRepository
     {
         Task<IEnumerable<Address>> GetAllAddressesAsync();
         Task<Address> GetAddressByIdAsync(int addressId);

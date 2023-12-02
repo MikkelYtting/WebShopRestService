@@ -8,7 +8,7 @@ using WebShopRestService.Models;
 
 namespace WebShopRestService.Repositories
 {
-    public class AddressRepository : IAddressRepository
+    public class AddressRepository : IAddressesRepository
     {
         private readonly MyDbContext _context;
 
