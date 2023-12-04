@@ -176,7 +176,6 @@ namespace WebShopRestService.Managers
             }
         }
 
-
         /// <summary>
         /// Calculates the total amount of an order based on its items.
         /// </summary>
