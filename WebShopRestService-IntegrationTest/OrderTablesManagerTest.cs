@@ -8,7 +8,7 @@ using WebShopRestService.Repositories;
 public class OrderTablesManagerTest
 {
     private MyDbContext _context;
-    private AddressRepository _addressRepository;
+    private AddressesRepository _addressRepository;
 
     // This method will run before each test method is executed.
     [TestInitialize]
@@ -22,7 +22,7 @@ public class OrderTablesManagerTest
         _context = new MyDbContext(options);
 
         // Initialize the repository with the context
-        _addressRepository = new AddressRepository(_context);
+        _addressRepository = new AddressesRepository(_context);
     }
 
     [TestMethod]

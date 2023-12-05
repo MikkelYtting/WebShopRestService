@@ -116,6 +116,7 @@ public class AddressesManagerTests
         await _context.SaveChangesAsync();
     }
 
+    
     [TestMethod]
     public async Task Delete_ShouldRemoveAddress()
     {
@@ -138,7 +139,7 @@ public class AddressesManagerTests
         var deletedAddress = await _context.Addresses.FindAsync(addressToDelete.AddressId);
         Assert.IsNull(deletedAddress, "Address should be deleted from the database.");
     }
-
+    
 
     [TestCleanup]
     public void Cleanup()

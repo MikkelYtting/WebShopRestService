@@ -8,11 +8,11 @@ using WebShopRestService.Models;
 
 namespace WebShopRestService.Repositories
 {
-    public class AddressRepository : IAddressesRepository
+    public class AddressesRepository : IAddressesRepository
     {
         private readonly MyDbContext _context;
 
-        public AddressRepository(MyDbContext context)
+        public AddressesRepository(MyDbContext context)
         {
             _context = context;
         }
