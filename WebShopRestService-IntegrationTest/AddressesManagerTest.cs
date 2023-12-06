@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using WebShopRestService.Data;
 using WebShopRestService.Managers;
 using WebShopRestService.Models;
@@ -9,6 +10,7 @@ public class AddressesManagerTests
 {
     private MyDbContext _context;
     private AddressesManager _manager;
+    private IDbContextTransaction _transaction;
 
     [TestInitialize]
     public void Initialize()
@@ -16,13 +18,22 @@ public class AddressesManagerTests
         // Assuming we have a method to get the test connection string
         // var connectionString = GetTestConnectionString();
 
-        // Configure the DbContext with the connection string for the test database
+        // Configure the DbContext with the connection string for the database
+        // Azure database
+       // var options = new DbContextOptionsBuilder<MyDbContext>()
+          //  .UseSqlServer("Server=tcp:mikkelyttingserver.database.windows.net,1433;Initial Catalog=DatabaseForUdviklere-Webshop;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;")
+           // .Options;
+        // Local database
         var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseSqlServer("Server=tcp:mikkelyttingserver.database.windows.net,1433;Initial Catalog=DatabaseForUdviklere-Webshop;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;")
+            .UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False")
             .Options;
 
+
+
+        
         _context = new MyDbContext(options);
         _manager = new AddressesManager(_context);
+        _transaction = _context.Database.BeginTransaction();
     }
 
     [TestMethod]
@@ -110,10 +121,6 @@ public class AddressesManagerTests
         var updatedAddress = await _context.Addresses.FindAsync(addressToUpdate.AddressId);
         Assert.IsNotNull(updatedAddress);
         Assert.AreEqual("124 Main St", updatedAddress.Street, "Street name should be updated.");
-
-        // Cleanup - remove the test data
-        _context.Addresses.Remove(updatedAddress);
-        await _context.SaveChangesAsync();
     }
 
     
@@ -144,6 +151,8 @@ public class AddressesManagerTests
     [TestCleanup]
     public void Cleanup()
     {
+        _transaction.Rollback(); // This will undo any changes made during the test
+        _transaction.Dispose(); // Dispose the transaction
         _context.Dispose();
     }
     

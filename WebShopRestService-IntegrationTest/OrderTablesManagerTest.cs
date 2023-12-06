@@ -1,31 +1,129 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using WebShopRestService.Data;
+using WebShopRestService.Interfaces;
+using WebShopRestService.Managers;
+using WebShopRestService.Models;
 using WebShopRestService.Repositories;
 
 [TestClass]
-public class OrderTablesManagerTest
+public class OrderTablesManagerTests
 {
     private MyDbContext _context;
-    private AddressesRepository _addressRepository;
+    private OrderTablesManager _manager;
+    private IOrderTablesRepository _orderTableRepository;
+    private ICustomersRepository _customerRepository;
+    private IAddressesRepository _addressRepository;
+    private IProductsRepository _productRepository;
 
-    // This method will run before each test method is executed.
     [TestInitialize]
-    public void TestSetup()
+    public void Initialize()
     {
-        // Configure the DbContext with the connection string for the test database
         var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseSqlServer("Server=tcp:mikkelyttingserver.database.windows.net,1433;Initial Catalog=DatabaseForUdviklere-Webshop;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;")
+            .UseSqlServer("YourConnectionStringHere")
             .Options;
 
         _context = new MyDbContext(options);
-
-        // Initialize the repository with the context
+        _orderTableRepository = new OrderTablesRepository(_context);
+        _customerRepository = new CustomersRepository(_context);
         _addressRepository = new AddressesRepository(_context);
+        _productRepository = new ProductsRepository(_context);
+        _manager = new OrderTablesManager(_customerRepository, _addressRepository, _orderTableRepository, _productRepository);
     }
 
     [TestMethod]
+    public async Task AddOrder_ShouldAddSuccessfully()
+    {
+        // Arrange
+        var newOrder = new OrderTable
+        {
+            CustomerId = 1, // Assumes a Customer with ID 1 exists in your database
+            DeliveryAddressId = 1, // Assumes an Address with ID 1 exists in your database
+            OrderDate = DateTime.UtcNow,
+            TotalAmount = 100M,
+            OrderItems = new System.Collections.Generic.List<OrderItem>
+            {
+                new OrderItem
+                {
+                    ProductId = 1, // Assumes a Product with ID 1 exists in your database
+                    Quantity = 1,
+                    Price = 100M
+                }
+            }
+        };
+
+        // Act
+        await _manager.ValidateAndAddOrderAsync(newOrder);
+
+        // Assert
+        var addedOrder = await _orderTableRepository.GetOrderByIdAsync(newOrder.OrderId);
+        Assert.IsNotNull(addedOrder, "The order should be added successfully.");
+
+        // Cleanup
+        if (addedOrder != null)
+        {
+            await _orderTableRepository.DeleteOrderAsync(addedOrder.OrderId);
+        }
+    }
+
+    [TestMethod]
+    public async Task GetOrderById_ShouldReturnOrder()
+    {
+        // Arrange
+        int orderId = 1; // Replace with a valid order ID
+
+        // Act
+        var order = await _manager.GetOrderByIdAsync(orderId);
+
+        // Assert
+        Assert.IsNotNull(order, "Should retrieve the order with the specified ID.");
+    }
+
+    [TestMethod]
+    public async Task UpdateOrder_ShouldModifyOrder()
+    {
+        // Arrange
+        var orderToUpdate = await _context.Orders.FirstOrDefaultAsync();
+        Assert.IsNotNull(orderToUpdate, "Test requires at least one order in the database.");
+        decimal originalTotal = orderToUpdate.TotalAmount;
+        orderToUpdate.TotalAmount = originalTotal + 1; // Modify the total amount
+
+        // Act
+        await _manager.UpdateOrderAsync(orderToUpdate);
+
+        // Assert
+        var updatedOrder = await _orderTableRepository.GetOrderByIdAsync(orderToUpdate.OrderId);
+        Assert.AreEqual(originalTotal + 1, updatedOrder.TotalAmount, "The order total should be updated.");
+
+        // Cleanup - reset the total amount
+        updatedOrder.TotalAmount = originalTotal;
+        await _manager.UpdateOrderAsync(updatedOrder);
+    }
+
+    [TestMethod]
+    public async Task DeleteOrder_ShouldRemoveOrder()
+    {
+        // Arrange
+        var newOrder = new OrderTable
+        {
+            CustomerId = 1,
+            DeliveryAddressId = 1,
+            OrderDate = DateTime.UtcNow,
+            TotalAmount = 100M
+        };
+        await _context.Orders.AddAsync(newOrder);
+        await _context.SaveChangesAsync();
+
+        // Act
+        await _manager.DeleteOrderAsync(newOrder.OrderId);
+
+        // Assert
+        var deletedOrder = await _orderTableRepository.GetOrderByIdAsync(newOrder.OrderId);
+        Assert.IsNull(deletedOrder, "The order should be deleted.");
+    }
     public async Task AddressShouldNotExist_WhenQueriedWithNonExistentId()
     {
         // Arrange - ID set to 1 for testing or any other non-existent ID
@@ -51,10 +149,16 @@ public class OrderTablesManagerTest
         Assert.IsTrue(exists, $"Address with ID {existingAddressId} should exist.");
     }
 
-    // This method will run after each test method is executed.
     [TestCleanup]
-    public void TestCleanup()
+    public void Cleanup()
     {
         _context.Dispose();
+    }
+
+    // Helper method to get the connection string, replace with your actual method to retrieve the connection string
+    private string GetConnectionString()
+    {
+        // Normally, you would retrieve the connection string from a configuration file or environment variable
+        return "YourConnectionStringHere";
     }
 }

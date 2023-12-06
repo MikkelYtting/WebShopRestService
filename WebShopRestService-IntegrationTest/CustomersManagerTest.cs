@@ -16,8 +16,17 @@ public class CustomersManagerTests
     [ClassInitialize]
     public static void ClassInitialize(TestContext testContext)
     {
+        // Assuming we have a method to get the test connection string
+        // var connectionString = GetTestConnectionString();
+
+        // Configure the DbContext with the connection string for the database
+        // Azure database
+        // var options = new DbContextOptionsBuilder<MyDbContext>()
+        //  .UseSqlServer("Server=tcp:mikkelyttingserver.database.windows.net,1433;Initial Catalog=DatabaseForUdviklere-Webshop;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;")
+        // .Options;
+        // Local database
         var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseSqlServer("Server=tcp:mikkelyttingserver.database.windows.net,1433;Initial Catalog=DatabaseForUdviklere-Webshop;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;")
+            .UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False")
             .Options;
 
         _context = new MyDbContext(options);
@@ -58,14 +67,18 @@ public class CustomersManagerTests
         // Assert
         Assert.IsNotNull(customer, $"Customer with ID {existingCustomerId} should exist.");
     }
-
     [TestMethod]
     public async Task Create_ShouldAddNewCustomer()
     {
         // Arrange
         var newCustomer = new Customer
         {
-            // Populate with customer data
+            FirstName = "Test",
+            LastName = "User",
+            Email = "test@example.com", // Make sure this is set to a non-null value
+            Phone = "1234567890",
+            AddressId = 1, // Assuming there is an Address with ID 1 in the database
+            // ... set other required properties
         };
 
         // Act
