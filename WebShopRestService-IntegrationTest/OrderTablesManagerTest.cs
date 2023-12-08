@@ -23,7 +23,7 @@ public class OrderTablesManagerTests
     public void Initialize()
     {
         var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseSqlServer("YourConnectionStringHere")
+            .UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False")
             .Options;
 
         _context = new MyDbContext(options);
@@ -86,7 +86,7 @@ public class OrderTablesManagerTests
     public async Task UpdateOrder_ShouldModifyOrder()
     {
         // Arrange
-        var orderToUpdate = await _context.Orders.FirstOrDefaultAsync();
+        var orderToUpdate = await _context.OrderTables.FirstOrDefaultAsync();
         Assert.IsNotNull(orderToUpdate, "Test requires at least one order in the database.");
         decimal originalTotal = orderToUpdate.TotalAmount;
         orderToUpdate.TotalAmount = originalTotal + 1; // Modify the total amount
@@ -114,7 +114,7 @@ public class OrderTablesManagerTests
             OrderDate = DateTime.UtcNow,
             TotalAmount = 100M
         };
-        await _context.Orders.AddAsync(newOrder);
+        await _context.OrderTables.AddAsync(newOrder);
         await _context.SaveChangesAsync();
 
         // Act

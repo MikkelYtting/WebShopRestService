@@ -25,22 +25,22 @@ namespace WebShopRestService.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderTable>>> GetOrders()
         {
-          if (_context.Orders == null)
+          if (_context.OrderTables == null)
           {
               return NotFound();
           }
-            return await _context.Orders.ToListAsync();
+            return await _context.OrderTables.ToListAsync();
         }
 
         // GET: api/OrderTables/5
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderTable>> GetOrderTable(int id)
         {
-          if (_context.Orders == null)
+          if (_context.OrderTables == null)
           {
               return NotFound();
           }
-            var orderTable = await _context.Orders.FindAsync(id);
+            var orderTable = await _context.OrderTables.FindAsync(id);
 
             if (orderTable == null)
             {
@@ -86,11 +86,11 @@ namespace WebShopRestService.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderTable>> PostOrderTable(OrderTable orderTable)
         {
-          if (_context.Orders == null)
+          if (_context.OrderTables == null)
           {
-              return Problem("Entity set 'MyDbContext.Orders'  is null.");
+              return Problem("Entity set 'MyDbContext.OrderTables'  is null.");
           }
-            _context.Orders.Add(orderTable);
+            _context.OrderTables.Add(orderTable);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetOrderTable", new { id = orderTable.OrderId }, orderTable);
@@ -100,17 +100,17 @@ namespace WebShopRestService.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrderTable(int id)
         {
-            if (_context.Orders == null)
+            if (_context.OrderTables == null)
             {
                 return NotFound();
             }
-            var orderTable = await _context.Orders.FindAsync(id);
+            var orderTable = await _context.OrderTables.FindAsync(id);
             if (orderTable == null)
             {
                 return NotFound();
             }
 
-            _context.Orders.Remove(orderTable);
+            _context.OrderTables.Remove(orderTable);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -118,7 +118,7 @@ namespace WebShopRestService.Controllers
 
         private bool OrderTableExists(int id)
         {
-            return (_context.Orders?.Any(e => e.OrderId == id)).GetValueOrDefault();
+            return (_context.OrderTables?.Any(e => e.OrderId == id)).GetValueOrDefault();
         }
     }
 }

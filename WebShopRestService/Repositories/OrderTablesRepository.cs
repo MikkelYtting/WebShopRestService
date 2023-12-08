@@ -18,17 +18,17 @@ public class OrderTablesRepository : IOrderTablesRepository
 
     public async Task<IEnumerable<OrderTable>> GetAllOrdersAsync()
     {
-        return await _context.Orders.ToListAsync();
+        return await _context.OrderTables.ToListAsync();
     }
 
     public async Task<OrderTable> GetOrderByIdAsync(int orderId)
     {
-        return await _context.Orders.FindAsync(orderId);
+        return await _context.OrderTables.FindAsync(orderId);
     }
 
     public async Task AddOrderAsync(OrderTable order)
     {
-        _context.Orders.Add(order);
+        _context.OrderTables.Add(order);
         await _context.SaveChangesAsync();
     }
 
@@ -40,24 +40,24 @@ public class OrderTablesRepository : IOrderTablesRepository
 
     public async Task DeleteOrderAsync(int orderId)
     {
-        var order = await _context.Orders.FindAsync(orderId);
+        var order = await _context.OrderTables.FindAsync(orderId);
         if (order != null)
         {
-            _context.Orders.Remove(order);
+            _context.OrderTables.Remove(order);
             await _context.SaveChangesAsync();
         }
     }
 
     public async Task<IEnumerable<OrderTable>> GetOrdersByCustomerAndDateAsync(int customerId, DateTime start, DateTime end)
     {
-        return await _context.Orders
+        return await _context.OrderTables
             .Where(o => o.CustomerId == customerId && o.OrderDate >= start && o.OrderDate <= end)
             .ToListAsync();
     }
 
     public async Task DeleteOrderAsync(OrderTable order)
     {
-        _context.Orders.Remove(order);
+        _context.OrderTables.Remove(order);
         await _context.SaveChangesAsync();
     }
 }

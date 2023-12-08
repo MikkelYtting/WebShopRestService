@@ -15,7 +15,7 @@ namespace WebShopRestService.Data
         public DbSet<UserCredential> UserCredentials { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<OrderTable> Orders { get; set; }
+        public DbSet<OrderTable> OrderTables { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<ProductAudit> ProductAudits { get; set; }
