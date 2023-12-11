@@ -4,19 +4,21 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WebShopRestService.Data;
 using WebShopRestService.Models;
 using BCrypt.Net; // Ensure BCrypt.Net library is added to the project.
+using WebShopRestService.Configurations; // Use the correct namespace for JwtConfig
 
 public class UserCredentialsManager
 {
-    private readonly string _secretKey; // The secret key used for encoding the JWT token.
+    private readonly JwtConfig _jwtConfig; // The JWT configuration which includes the secret key.
     private readonly MyDbContext _context;
 
-    public UserCredentialsManager(string secretKey, MyDbContext context)
+    public UserCredentialsManager(IOptions<JwtConfig> jwtConfig, MyDbContext context)
     {
-        _secretKey = secretKey;
+        _jwtConfig = jwtConfig.Value; // Access the JwtConfig instance via IOptions.
         _context = context;
     }
 
@@ -36,7 +38,7 @@ public class UserCredentialsManager
     public string GenerateJwtToken(UserCredential user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_secretKey);
+        var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret); // Use the secret key from the JwtConfig.
 
         // Ensure the Role property is eagerly loaded with the user entity.
         var userWithRole = _context.UserCredentials.Include(u => u.Role).SingleOrDefault(u => u.UserId == user.UserId);

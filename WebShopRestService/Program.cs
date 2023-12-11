@@ -4,12 +4,14 @@ using System.Text;
 using WebShopRestService.Data;
 using Microsoft.EntityFrameworkCore;
 using WebShopRestService.Managers; // Ensure this namespace correctly references where your UserCredentialsManager is located.
+using WebShopRestService.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Read the JwtKey from configuration, which should be securely stored either in appsettings.json or an environment variable.
-var jwtKey = builder.Configuration["JwtKey"];
-if (string.IsNullOrEmpty(jwtKey))
+var jwtConfigSection = builder.Configuration.GetSection("JwtConfig");
+builder.Services.Configure<JwtConfig>(jwtConfigSection);
+var jwtConfig = jwtConfigSection.Get<JwtConfig>(); // Get the JwtConfig instance with the bound settings.
+if (string.IsNullOrEmpty(jwtConfig.Secret))
 {
     throw new InvalidOperationException("JWT key is not configured properly.");
 }
@@ -34,7 +36,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             // Ensure the signing key is valid and is trusted by the server.
             ValidateIssuerSigningKey = true,
             // The signing key is derived from the secret stored in configuration.
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Secret)),
             // These settings relax the requirements on the token issuer and audience for simplicity.
             // In a production scenario, you may want to validate the issuer and audience for extra security.
             ValidateIssuer = false,
