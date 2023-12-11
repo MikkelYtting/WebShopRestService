@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis; // Required for ICollection
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using WebShopRestService.Models;
 
-namespace WebShopRestService.Models
+namespace WebShopRestService.DTO
 {
-    public class Product
+    public class ProductDTO
     {
         [Key]
         public int ProductId { get; set; }
@@ -33,14 +32,12 @@ namespace WebShopRestService.Models
         [Required(ErrorMessage = "Category ID is required.")]
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
-
     }
 
-    public class ProductExtra : Product
+    public class CreateProductDTO : ProductDTO
     {
-        [AllowNull]
         public Category Category { get; set; }
-        [AllowNull]
+
         // Assuming there can be products not yet ordered
         public ICollection<OrderItem> OrderItems { get; set; }
     }
