@@ -17,18 +17,18 @@ jobs:
     - name: Install .NET Core
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0.x' # Specify your required .NET version here
+        dotnet-version: '7.0.x' 
 
     # Restore dependencies
     - name: Restore dependencies
-      run: dotnet restore WebShopRestService/WebShopRestService.sln
+      run: dotnet restore WebShopRestService.sln
 
     # Build the solution
     - name: Build the solution
-      run: dotnet build WebShopRestService/WebShopRestService.sln --no-restore --configuration Release
+      run: dotnet build WebShopRestService.sln --no-restore --configuration Release
 
-   # Run unit tests
+    # Run unit tests
     - name: Run unit tests
-      run: dotnet test WebShopRestService-UnitTest --no-build --configuration Release
+      run: dotnet test WebShopRestService-UnitTest/WebShopRestService-UnitTest.csproj --no-build --configuration Release
 
     
