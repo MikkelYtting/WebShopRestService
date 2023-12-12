@@ -2,34 +2,27 @@ name: .NET CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build-and-test:
-    runs-on: windows-latest
+    runs-on: windows-latest  # Or ubuntu-latest, depending on your requirements
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
 
-    # Setup .NET Core SDK
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '6.0.x' # Specify your required .NET version here
+        dotnet-version: '3.1'  # Replace with your .NET version
 
-    # Restore dependencies
     - name: Restore dependencies
-      run: dotnet restore ${{ env.Solution_Name }}
+      run: dotnet restore
 
-    # Build the solution
-    - name: Build the solution
-      run: dotnet build ${{ env.Solution_Name }} --no-restore --configuration ${{ matrix.configuration }}
+    - name: Build
+      run: dotnet build --no-restore
 
-    # Run unit tests
-    - name: Run unit tests
-      run: dotnet test ${{ env.Test_Project_Path }} --no-build
-    env:
-      Solution_Name: WebShopRestService.sln
-      Test_Project_Path: WebShopRestService-UnitTest
+    - name: Run tests in WebShopRestService-UnitTest
+      run: dotnet test --no-build ./WebShopRestService-UnitTest
