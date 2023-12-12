@@ -21,13 +21,14 @@ jobs:
 
     # Restore dependencies
     - name: Restore dependencies
-      run: dotnet restore ${{ env.Solution_Name }}
+      run: dotnet restore WebShopRestService/WebShopRestService.sln
 
     # Build the solution
     - name: Build the solution
-      run: dotnet build ${{ env.Solution_Name }} --no-restore --configuration Release
+      run: dotnet build WebShopRestService/WebShopRestService.sln --no-restore --configuration Release
 
-    # Run unit tests
+   # Run unit tests
     - name: Run unit tests
-      run: dotnet test WebShopRestService-UnitTest --no-build
+      run: dotnet test WebShopRestService-UnitTest --no-build --configuration Release
+
     
