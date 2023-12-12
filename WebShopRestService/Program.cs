@@ -23,6 +23,8 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbConnection")));
 
+builder.Services.AddAutoMapper(typeof(MapperInitializer));
+
 // Add the UserCredentialsManager to the services collection to manage user authentication tasks.
 builder.Services.AddScoped<UserCredentialsManager>();
 
@@ -64,6 +66,8 @@ if (app.Environment.IsDevelopment())
     // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
     app.UseSwaggerUI();
 }
+
+app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 // Enforce the use of HTTPS to secure your app by redirecting HTTP requests to HTTPS.
 app.UseHttpsRedirection();

@@ -28,6 +28,7 @@ public class ProductsRepository : IProductsRepository
     {
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
+        
     }
 
     public async Task UpdateProductAsync(Product product)
