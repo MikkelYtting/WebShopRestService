@@ -10,7 +10,7 @@ using WebShopRestService.Models;
 
 namespace WebShopRestService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("sql/[controller]")]
     [ApiController]
     public class OrderItemsController : ControllerBase
     {

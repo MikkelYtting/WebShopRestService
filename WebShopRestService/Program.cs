@@ -5,8 +5,18 @@ using WebShopRestService.Data;
 using Microsoft.EntityFrameworkCore;
 using WebShopRestService.Managers; // Ensure this namespace correctly references where your UserCredentialsManager is located.
 using WebShopRestService.Configurations;
+using WebShopRestService.Models.MongoDB;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDB"));
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.ProductsRepository>();
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.CategoriesRepository>();
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.OrderTablesRepository>();
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.RolesRepository>();
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.AddressesRepository>();
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.CustomersRepository>();
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.OrderItemsRepository>();
 
 var jwtConfigSection = builder.Configuration.GetSection("JwtConfig");
 builder.Services.Configure<JwtConfig>(jwtConfigSection);

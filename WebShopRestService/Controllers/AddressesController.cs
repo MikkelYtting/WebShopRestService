@@ -13,7 +13,7 @@ namespace WebShopRestService.Controllers
     /// <summary>
     /// Controller responsible for managing addresses.
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("sql/[controller]")]
     [ApiController]
     public class AddressesController : ControllerBase
     {
