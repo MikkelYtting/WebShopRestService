@@ -17,8 +17,29 @@ namespace WebShopRestService.Controllers
             // This is just a placeholder for demonstration purposes.
             return Ok(new { message = "This is the admin dashboard data." });
         }
+        /*
+        [HttpPost("users")]
+        public IActionResult CreateUser([FromBody] CreateUserDto newUser)
+        {
+            // Implementation...
+        }
+
+        // Update an existing user
+        [HttpPut("users/{userId}")]
+        public IActionResult UpdateUser(int userId, [FromBody] UpdateUserDto updatedUser)
+        {
+            // Implementation...
+        }
+
+        // Delete a user
+        [HttpDelete("users/{userId}")]
+        public IActionResult DeleteUser(int userId)
+        {
+            // Implementation...
+        }
 
         // Add more admin-only actions here
         // ...
+        */
     }
 }
