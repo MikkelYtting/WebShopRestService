@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using WebShopRestService.Data;
 using WebShopRestService.DTOs;
 using WebShopRestService.Models;
-using WebShopRestService.Managers; 
+using WebShopRestService.Managers;
 
 namespace WebShopRestService.Controllers
 {
@@ -17,7 +17,7 @@ namespace WebShopRestService.Controllers
     public class UserCredentialsController : ControllerBase
     {
         private readonly MyDbContext _context;
-        private readonly UserCredentialsManager _userCredentialsManager; 
+        private readonly UserCredentialsManager _userCredentialsManager;
 
         public UserCredentialsController(MyDbContext context, UserCredentialsManager userCredentialsManager)
         {
@@ -53,9 +53,9 @@ namespace WebShopRestService.Controllers
                 return Unauthorized("Invalid username or password.");
             }
 
-            // If credentials are valid, generate a JWT token for the user.
+            // If credentials are valid, generate a JWT token for the user with the role claim.
             var token = _userCredentialsManager.GenerateJwtToken(userCredential);
-            return Ok(new { token = token });
+            return Ok(new { token = token, role = userCredential.Role.Name });
         }
 
         // Retrieves all user credentials.

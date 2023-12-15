@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebShopRestService.Data;
 using WebShopRestService.Models;
 
@@ -12,84 +11,69 @@ namespace WebShopRestService.Controllers
 {
     /// <summary>
     /// Controller responsible for managing addresses.
+    /// All modifying actions are restricted to administrators.
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] // Require authentication for all methods
     public class AddressesController : ControllerBase
     {
         private readonly MyDbContext _context;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AddressesController"/> class.
-        /// </summary>
-        /// <param name="context">The database context.</param>
         public AddressesController(MyDbContext context)
         {
             _context = context;
         }
 
         // GET: api/Addresses
-
-        /// <summary>
-        /// Gets a list of all addresses.
-        /// </summary>
-        /// <returns>A list of addresses.</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Address>>> GetAddresses()
         {
             if (_context.Addresses == null)
             {
-                return NotFound();
+                return NotFound("Address list is empty.");
             }
 
-            return await _context.Addresses.ToListAsync();
+            // If the user is an admin, return all addresses. 
+            
+            if (User.IsInRole("Administrator"))
+            {
+                return await _context.Addresses.ToListAsync();
+            }
+            else
+            {
+                 return Forbid();
+            }
         }
 
         // GET: api/Addresses/5
-
-        /// <summary>
-        /// Gets a specific address by ID.
-        /// </summary>
-        /// <param name="id">The ID of the address to retrieve.</param>
-        /// <returns>The requested address.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Address>> GetAddress(int id)
         {
             if (_context.Addresses == null)
             {
-                return NotFound();
+                return NotFound("Address list is empty.");
             }
 
             var address = await _context.Addresses.FindAsync(id);
 
             if (address == null)
             {
-                return NotFound();
+                return NotFound($"Address with ID {id} not found.");
             }
 
+            // Assuming regular users can view individual addresses:
             return address;
         }
 
         // PUT: api/Addresses/5
-
-        /// <summary>
-        /// Updates an existing address.
-        /// </summary>
-        /// <param name="id">The ID of the address to update.</param>
-        /// <param name="address">The updated address data.</param>
-        /// <returns>NoContent on success, BadRequest or NotFound on failure.</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "Administrator")] // Only admins can update addresses
         public async Task<IActionResult> PutAddress(int id, Address address)
         {
             if (id != address.AddressId)
             {
-                return BadRequest();
-            }
-
-            // Check if the incoming data meets validation rules defined in the Address model.
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState); // Return validation errors.
+                return BadRequest("Address ID mismatch.");
             }
 
             _context.Entry(address).State = EntityState.Modified;
@@ -102,7 +86,7 @@ namespace WebShopRestService.Controllers
             {
                 if (!AddressExists(id))
                 {
-                    return NotFound();
+                    return NotFound($"Address with ID {id} not found.");
                 }
                 else
                 {
@@ -114,51 +98,35 @@ namespace WebShopRestService.Controllers
         }
 
         // POST: api/Addresses
-
-        /// <summary>
-        /// Creates a new address.
-        /// </summary>
-        /// <param name="address">The address to create.</param>
-        /// <returns>A CreatedAtAction response with the created address or BadRequest on failure.</returns>
         [HttpPost]
+        [Authorize(Roles = "Administrator")] // Only admins can create addresses
         public async Task<ActionResult<Address>> PostAddress(Address address)
         {
             if (_context.Addresses == null)
             {
-                return Problem("Entity set 'MyDbContext.Addresses' is null.");
-            }
-
-            // Check if the incoming data meets validation rules defined in the Address model.
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState); // Return validation errors.
+                return Problem("Address entity set is null.");
             }
 
             _context.Addresses.Add(address);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAddress", new { id = address.AddressId }, address);
+            return CreatedAtAction(nameof(GetAddress), new { id = address.AddressId }, address);
         }
 
         // DELETE: api/Addresses/5
-
-        /// <summary>
-        /// Deletes a specific address by ID.
-        /// </summary>
-        /// <param name="id">The ID of the address to delete.</param>
-        /// <returns>NoContent on success, NotFound on failure.</returns>
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")] // Only admins can delete addresses
         public async Task<IActionResult> DeleteAddress(int id)
         {
             if (_context.Addresses == null)
             {
-                return NotFound();
+                return NotFound("Address entity set is null.");
             }
 
             var address = await _context.Addresses.FindAsync(id);
             if (address == null)
             {
-                return NotFound();
+                return NotFound($"Address with ID {id} not found.");
             }
 
             _context.Addresses.Remove(address);
