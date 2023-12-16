@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebShopRestService.Data;
 using Microsoft.EntityFrameworkCore;
+using Neo4jClient;
 using WebShopRestService.Managers; // Ensure this namespace correctly references where your UserCredentialsManager is located.
 using WebShopRestService.Configurations;
 using WebShopRestService.Models.MongoDB;
@@ -34,6 +35,10 @@ builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbConnection")));
 
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
+
+var client = new BoltGraphClient(new Uri("bolt://localhost:7687"), "simonlm", "qwerty123");
+client.ConnectAsync();
+builder.Services.AddSingleton<IGraphClient>(client);
 
 // Add the UserCredentialsManager to the services collection to manage user authentication tasks.
 builder.Services.AddScoped<UserCredentialsManager>();
