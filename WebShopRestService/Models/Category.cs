@@ -16,7 +16,16 @@ namespace WebShopRestService.Models
 
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
         public string Description { get; set; }
+       
+        [NotMapped]
+        public ICollection<Product> Products { get; set; }
+        }
+}
 
+
+
+
+        /*
         [NotMapped] // Instructing the framework to ignore the specified property when generating the database schema
         [EnsureNonEmptyCollection(ErrorMessage = "At least one product is required in the category.")]
         public ICollection<Product> Products { get; set; }
@@ -44,4 +53,5 @@ namespace WebShopRestService.Models
 
     // Ease of Access: When you're working with a Category object in your code, having direct access to its associated Products can make many operations more straightforward.
     // For example, you might want to display all products in a category, or calculate the total stock for a category.
-}
+
+*/
