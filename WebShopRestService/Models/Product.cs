@@ -31,9 +31,9 @@ namespace WebShopRestService.Models
         public int StockQuantity { get; set; }
 
         [Required(ErrorMessage = "Category ID is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Category ID must be a positive number.")] // Updated range to start from 1
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
-
     }
 
     public class ProductExtra : Product

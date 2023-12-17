@@ -19,6 +19,7 @@ namespace WebShopRestService.Models
         public string HashedPassword { get; set; }
 
         [Required(ErrorMessage = "Role ID is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Role ID must be a positive number.")]
         [ForeignKey("Role")]
         public int RoleId { get; set; }
         public Role Role { get; set; }
