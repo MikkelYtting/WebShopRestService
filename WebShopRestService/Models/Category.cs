@@ -15,7 +15,6 @@ namespace WebShopRestService.Models
         public string Name { get; set; }
 
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
-        [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
         [NotMapped] // Instructing the framework to ignore the specified property when generating the database schema
