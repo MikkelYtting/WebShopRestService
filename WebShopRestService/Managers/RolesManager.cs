@@ -1,53 +1,50 @@
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using WebShopRestService.Data;
+using WebShopRestService.Interfaces; // Ensure to include the namespace for IRolesRepository
 using WebShopRestService.Models;
 
 namespace WebShopRestService.Managers
 {
     public class RolesManager
     {
-        private readonly MyDbContext _context;
+        private readonly IRolesRepository _rolesRepository;
 
-        public RolesManager(MyDbContext context)
+        public RolesManager(IRolesRepository rolesRepository)
         {
-            _context = context;
+            _rolesRepository = rolesRepository;
         }
 
         public async Task<IEnumerable<Role>> GetAll()
         {
-            return await _context.Roles.ToListAsync();
+            return await _rolesRepository.GetAllRolesAsync();
         }
 
         public async Task<Role> Get(int id)
         {
-            return await _context.Roles.FindAsync(id);
+            return await _rolesRepository.GetRoleByIdAsync(id);
         }
 
         public async Task Update(int id, Role role)
         {
-            _context.Entry(role).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _rolesRepository.UpdateRoleAsync(role);
         }
 
         public async Task<Role> Create(Role role)
         {
-            _context.Roles.Add(role);
-            await _context.SaveChangesAsync();
-            return role;
+            await _rolesRepository.AddRoleAsync(role);
+            return role; // Assuming the repository handles SaveChangesAsync and returns the added entity
         }
 
         public async Task Delete(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
+            var role = await _rolesRepository.GetRoleByIdAsync(id);
             if (role != null)
             {
-                _context.Roles.Remove(role);
-                await _context.SaveChangesAsync();
+                
+                await _rolesRepository.DeleteRoleAsync(role.RoleId);
             }
         }
+
     }
 }

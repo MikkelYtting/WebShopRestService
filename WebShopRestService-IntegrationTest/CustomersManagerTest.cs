@@ -1,47 +1,44 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebShopRestService.Data;
+using WebShopRestService.Interfaces;
 using WebShopRestService.Managers;
 using WebShopRestService.Models;
+using WebShopRestService.Repositories;
 
-[TestClass]
-public class CustomersManagerTests
+namespace WebShopRestService.IntegrationTest
 {
-    private static MyDbContext _context;
-    private static CustomersManager _manager;
-
-    [ClassInitialize]
-    public static void ClassInitialize(TestContext testContext)
+    [TestClass]
+    public class CustomersManagerTest
     {
-        // Assuming we have a method to get the test connection string
-        // var connectionString = GetTestConnectionString();
+        private MyDbContext _context;
+        private ICustomersRepository _repository;
+        private CustomersManager _manager;
 
-        // Configure the DbContext with the connection string for the database
-        // Azure database
-        // var options = new DbContextOptionsBuilder<MyDbContext>()
-        //  .UseSqlServer("Server=tcp:mikkelyttingserver.database.windows.net,1433;Initial Catalog=DatabaseForUdviklere-Webshop;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;")
-        // .Options;
-        // Local database
-        var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False")
-            .Options;
+        [TestInitialize]
+        public void Initialize()
+        {
+            // Assuming we have a method to get the test connection string
+            // var connectionString = GetTestConnectionString();
 
-        _context = new MyDbContext(options);
-        _manager = new CustomersManager(_context);
+            // Configure the DbContext with the connection string for the database
+            // Azure database
+            //  var options = new DbContextOptionsBuilder<MyDbContext>()
+            //   .UseSqlServer("Server=tcp:mikkelyttingserver.database.windows.net,1433;Initial Catalog=DatabaseForUdviklere-Webshop;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;")
+            //  .Options;
+            //Local database
+            var options = new DbContextOptionsBuilder<MyDbContext>()
+                .UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False")
+                .Options;
 
-        // Optional: Seed the test database with data necessary for testing
-    }
+            _context = new MyDbContext(options);
 
-    [ClassCleanup]
-    public static void ClassCleanup()
-    {
-        // Optional: Clean up any data from the test database to reset the state
-        _context.Dispose();
-    }
-
+            // Create the repository and pass it to the manager
+            _repository = new CustomersRepository(_context);
+            _manager = new CustomersManager(_repository);
+        }
     [TestMethod]
     public async Task GetAll_ShouldReturnAllCustomers()
     {
@@ -142,6 +139,14 @@ public class CustomersManagerTests
         var deletedCustomer = await _context.Customers.FindAsync(customerToDelete.CustomerId);
         Assert.IsNull(deletedCustomer, "Customer should be deleted from the database.");
     }
+   /* [TestCleanup]
+    public void Cleanup()
+    {
+        _context.Dispose();
+    }
+        // No TestCleanup needed since we are using ClassCleanup for disposing the context
+    */
 
-    // No TestCleanup needed since we are using ClassCleanup for disposing the context
+    }
+   
 }

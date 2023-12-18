@@ -11,6 +11,8 @@ using WebShopRestService.Models;
 using BCrypt.Net;
 using WebShopRestService.Configurations;
 
+
+// Den her klasse følger ikke vores arkitektur!!
 public class UserCredentialsManager
 {
     private readonly JwtConfig _jwtConfig;
