@@ -1,52 +1,47 @@
-
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using WebShopRestService.Data;
+using WebShopRestService.Interfaces; // Ensure this is included for IAddressesRepository
 using WebShopRestService.Models;
 
 namespace WebShopRestService.Managers
 {
     public class AddressesManager
     {
-        private readonly MyDbContext _context;
+        private readonly IAddressesRepository _addressesRepository;
 
-        public AddressesManager(MyDbContext context)
+        public AddressesManager(IAddressesRepository addressesRepository)
         {
-            _context = context;
+            _addressesRepository = addressesRepository;
         }
 
         public async Task<IEnumerable<Address>> GetAll()
         {
-            return await _context.Addresses.ToListAsync();
+            return await _addressesRepository.GetAllAddressesAsync();
         }
 
         public async Task<Address> Get(int id)
         {
-            return await _context.Addresses.FindAsync(id);
+            return await _addressesRepository.GetAddressByIdAsync(id);
         }
 
         public async Task Update(int id, Address address)
         {
-            _context.Entry(address).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _addressesRepository.UpdateAddressAsync(address);
         }
 
         public async Task<Address> Create(Address address)
         {
-            _context.Addresses.Add(address);
-            await _context.SaveChangesAsync();
+            await _addressesRepository.AddAddressAsync(address);
+            // Assuming the repository method does the SaveChangesAsync and returns the added entity
             return address;
         }
 
         public async Task Delete(int id)
         {
-            var address = await _context.Addresses.FindAsync(id);
+            var address = await _addressesRepository.GetAddressByIdAsync(id);
             if (address != null)
             {
-                _context.Addresses.Remove(address);
-                await _context.SaveChangesAsync();
+                await _addressesRepository.DeleteAddressAsync(address);
             }
         }
     }

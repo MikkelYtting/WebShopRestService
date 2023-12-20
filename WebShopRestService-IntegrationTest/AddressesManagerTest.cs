@@ -1,15 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebShopRestService.Data;
 using WebShopRestService.Managers;
 using WebShopRestService.Models;
-
+using WebShopRestService.Repositories; // Ensure to include the repository namespace
 
 [TestClass]
 public class AddressesManagerTests
 {
     private MyDbContext _context;
     private AddressesManager _manager;
+    private AddressesRepository _repository; // Repository instance
     private IDbContextTransaction _transaction;
 
     [TestInitialize]
@@ -20,19 +22,22 @@ public class AddressesManagerTests
 
         // Configure the DbContext with the connection string for the database
         // Azure database
-       // var options = new DbContextOptionsBuilder<MyDbContext>()
-          //  .UseSqlServer("Server=tcp:mikkelyttingserver.database.windows.net,1433;Initial Catalog=DatabaseForUdviklere-Webshop;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;")
-           // .Options;
-        // Local database
+        //  var options = new DbContextOptionsBuilder<MyDbContext>()
+        //   .UseSqlServer("Server=tcp:mikkelyttingserver.database.windows.net,1433;Initial Catalog=DatabaseForUdviklere-Webshop;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;")
+        //  .Options;
+        //Local database
         var options = new DbContextOptionsBuilder<MyDbContext>()
             .UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False")
             .Options;
 
 
-
-        
         _context = new MyDbContext(options);
-        _manager = new AddressesManager(_context);
+
+        // Create the repository and pass it to the manager
+        _repository = new AddressesRepository(_context);
+        _manager = new AddressesManager(_repository);
+
+        // Begin a transaction for each test for easy rollback
         _transaction = _context.Database.BeginTransaction();
     }
 

@@ -19,11 +19,13 @@ namespace WebShopRestService.Models
         public decimal TotalAmount { get; set; }
 
         [Required(ErrorMessage = "Customer ID is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Customer ID must be a positive number.")]
         [ForeignKey("Customer")]
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
 
         [Required(ErrorMessage = "Delivery address ID is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Delivery address ID must be a positive number.")]
         [ForeignKey("DeliveryAddress")]
         public int DeliveryAddressId { get; set; }
         public Address DeliveryAddress { get; set; }

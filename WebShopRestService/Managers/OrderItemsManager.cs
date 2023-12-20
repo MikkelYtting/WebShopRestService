@@ -1,7 +1,8 @@
-﻿using System;
+
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebShopRestService.Interfaces;
+using WebShopRestService.Interfaces; // Ensure to include the namespace for IOrderItemsRepository
 using WebShopRestService.Models;
 
 namespace WebShopRestService.Managers

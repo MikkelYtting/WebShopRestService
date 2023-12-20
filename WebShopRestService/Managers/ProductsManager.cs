@@ -1,53 +1,49 @@
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using WebShopRestService.Data;
+using WebShopRestService.Interfaces; // Ensure to include the namespace for IProductsRepository
 using WebShopRestService.Models;
 
 namespace WebShopRestService.Managers
 {
     public class ProductsManager
     {
-        private readonly MyDbContext _context;
+        private readonly IProductsRepository _productsRepository;
 
-        public ProductsManager(MyDbContext context)
+        public ProductsManager(IProductsRepository productsRepository)
         {
-            _context = context;
+            _productsRepository = productsRepository;
         }
 
         public async Task<IEnumerable<Product>> GetAll()
         {
-            return await _context.Products.ToListAsync();
+            return await _productsRepository.GetAllProductsAsync();
         }
 
         public async Task<Product> Get(int id)
         {
-            return await _context.Products.FindAsync(id);
+            return await _productsRepository.GetProductByIdAsync(id);
         }
 
         public async Task Update(int id, Product product)
         {
-            _context.Entry(product).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _productsRepository.UpdateProductAsync(product);
         }
 
         public async Task<Product> Create(Product product)
         {
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
-            return product;
+            await _productsRepository.AddProductAsync(product);
+            return product; // Assuming the repository handles SaveChangesAsync and returns the added entity
         }
 
         public async Task Delete(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _productsRepository.GetProductByIdAsync(id);
             if (product != null)
             {
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
+                await _productsRepository.DeleteProductAsync(product.ProductId); // Use the correct property name
             }
         }
+
     }
 }

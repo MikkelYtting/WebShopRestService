@@ -23,6 +23,7 @@ namespace WebShopRestService.Models
         public DateTime ChangeDate { get; set; }
 
         [Required(ErrorMessage = "Product ID is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Product ID must be a positive number.")]
         [ForeignKey("Product")]
         public int ProductId { get; set; }
         public Product Product { get; set; }

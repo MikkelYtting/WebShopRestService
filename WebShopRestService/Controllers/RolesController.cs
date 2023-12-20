@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization; 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebShopRestService.Data;
@@ -12,6 +8,7 @@ namespace WebShopRestService.Controllers
 {
     [Route("sql/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Administrator")] // Apply authorization globally to all methods in the controller
     public class RolesController : ControllerBase
     {
         private readonly MyDbContext _context;
@@ -23,23 +20,25 @@ namespace WebShopRestService.Controllers
 
         // GET: api/Roles
         [HttpGet]
+        [AllowAnonymous] // Allow anonymous access to this method
         public async Task<ActionResult<IEnumerable<Role>>> GetRoles()
         {
-          if (_context.Roles == null)
-          {
-              return NotFound();
-          }
+            if (_context.Roles == null)
+            {
+                return NotFound();
+            }
             return await _context.Roles.ToListAsync();
         }
 
         // GET: api/Roles/5
         [HttpGet("{id}")]
+        [AllowAnonymous] // Allow anonymous access to this method
         public async Task<ActionResult<Role>> GetRole(int id)
         {
-          if (_context.Roles == null)
-          {
-              return NotFound();
-          }
+            if (_context.Roles == null)
+            {
+                return NotFound();
+            }
             var role = await _context.Roles.FindAsync(id);
 
             if (role == null)
@@ -51,8 +50,8 @@ namespace WebShopRestService.Controllers
         }
 
         // PUT: api/Roles/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        // No need to specify [Authorize] here since it's applied globally
         public async Task<IActionResult> PutRole(int id, Role role)
         {
             if (id != role.RoleId)
@@ -82,14 +81,14 @@ namespace WebShopRestService.Controllers
         }
 
         // POST: api/Roles
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        // No need to specify [Authorize] here since it's applied globally
         public async Task<ActionResult<Role>> PostRole(Role role)
         {
-          if (_context.Roles == null)
-          {
-              return Problem("Entity set 'MyDbContext.Roles'  is null.");
-          }
+            if (_context.Roles == null)
+            {
+                return Problem("Entity set 'MyDbContext.Roles'  is null.");
+            }
             _context.Roles.Add(role);
             await _context.SaveChangesAsync();
 
@@ -98,6 +97,7 @@ namespace WebShopRestService.Controllers
 
         // DELETE: api/Roles/5
         [HttpDelete("{id}")]
+        // No need to specify [Authorize] here since it's applied globally
         public async Task<IActionResult> DeleteRole(int id)
         {
             if (_context.Roles == null)

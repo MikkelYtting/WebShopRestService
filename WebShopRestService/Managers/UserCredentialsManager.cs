@@ -8,39 +8,37 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WebShopRestService.Data;
 using WebShopRestService.Models;
-using BCrypt.Net; // Ensure BCrypt.Net library is added to the project.
-using WebShopRestService.Configurations; // Use the correct namespace for JwtConfig
+using BCrypt.Net;
+using WebShopRestService.Configurations;
 
+
+// Den her klasse følger ikke vores arkitektur!!
 public class UserCredentialsManager
 {
-    private readonly JwtConfig _jwtConfig; // The JWT configuration which includes the secret key.
+    private readonly JwtConfig _jwtConfig;
     private readonly MyDbContext _context;
 
     public UserCredentialsManager(IOptions<JwtConfig> jwtConfig, MyDbContext context)
     {
-        _jwtConfig = jwtConfig.Value; // Access the JwtConfig instance via IOptions.
+        _jwtConfig = jwtConfig.Value;
         _context = context;
     }
 
-    // Hashes a password using the BCrypt algorithm.
     public string HashPassword(string password)
     {
         return BCrypt.Net.BCrypt.HashPassword(password);
     }
 
-    // Verifies that an input password matches the hashed password stored for a user.
     public bool VerifyPassword(string password, string storedHash)
     {
         return BCrypt.Net.BCrypt.Verify(password, storedHash);
     }
 
-    // Generates a JWT token for a given user that includes the user's role as a claim.
     public string GenerateJwtToken(UserCredential user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret); // Use the secret key from the JwtConfig.
+        var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
 
-        // Ensure the Role property is eagerly loaded with the user entity.
         var userWithRole = _context.UserCredentials.Include(u => u.Role).SingleOrDefault(u => u.UserId == user.UserId);
         var roleName = userWithRole?.Role?.Name ?? string.Empty;
 

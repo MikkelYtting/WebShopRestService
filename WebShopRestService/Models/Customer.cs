@@ -21,6 +21,7 @@ public class Customer
     [Required(ErrorMessage = "Email is required.")]
     [EmailAddress(ErrorMessage = "Invalid email format.")]
     [StringLength(100, ErrorMessage = "Email cannot be longer than 100 characters.")]
+    [RegularExpression(@"^(?!.*\.\.)[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Invalid email format.")]
     public string Email { get; set; }
 
     [Required(ErrorMessage = "Phone number is required.")]

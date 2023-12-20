@@ -23,10 +23,10 @@ public class CategoriesManagerTest
 
         // Configure the DbContext with the connection string for the database
         // Azure database
-        // var options = new DbContextOptionsBuilder<MyDbContext>()
-        //  .UseSqlServer("Server=tcp:mikkelyttingserver.database.windows.net,1433;Initial Catalog=DatabaseForUdviklere-Webshop;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;")
-        // .Options;
-        // Local database
+      //  var options = new DbContextOptionsBuilder<MyDbContext>()
+       //   .UseSqlServer("Server=tcp:mikkelyttingserver.database.windows.net,1433;Initial Catalog=DatabaseForUdviklere-Webshop;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;")
+       //  .Options;
+         //Local database
         var options = new DbContextOptionsBuilder<MyDbContext>()
             .UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False")
             .Options;

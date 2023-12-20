@@ -19,11 +19,13 @@ namespace WebShopRestService.Models
         public decimal Price { get; set; }
 
         [Required(ErrorMessage = "Order ID is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Order ID must be a positive number.")]
         [ForeignKey("OrderTable")]
         public int OrderId { get; set; }
         public virtual OrderTable OrderTable { get; set; }
 
         [Required(ErrorMessage = "Product ID is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Product ID must be a positive number.")]
         [ForeignKey("Product")]
         public int ProductId { get; set; }
         public virtual Product Product { get; set; }
