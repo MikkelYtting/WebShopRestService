@@ -14,6 +14,7 @@ namespace WebShopRestService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //Følger ikke arkitekturen
     public class UserCredentialsController : ControllerBase
     {
         private readonly MyDbContext _context;
