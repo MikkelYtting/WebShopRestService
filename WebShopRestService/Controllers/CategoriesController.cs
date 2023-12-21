@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebShopRestService.Data;
+using WebShopRestService.Managers;
 using WebShopRestService.Models;
 
 namespace WebShopRestService.Controllers
@@ -15,33 +12,32 @@ namespace WebShopRestService.Controllers
     [Produces("application/json")]
     public class CategoriesController : ControllerBase
     {
-        private readonly MyDbContext _context;
+        private readonly CategoriesManager _categoriesManager;
 
-        public CategoriesController(MyDbContext context)
+        public CategoriesController(CategoriesManager categoriesManager)
         {
-            _context = context;
+            _categoriesManager = categoriesManager;
         }
 
         // GET: api/Categories
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-          if (_context.Categories == null)
-          {
-              return NotFound();
-          }
-            return await _context.Categories.ToListAsync();
+            var categories = await _categoriesManager.GetAllCategoriesAsync();
+
+            if (categories == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(categories);
         }
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Category>> GetCategory(int id)
         {
-          if (_context.Categories == null)
-          {
-              return NotFound();
-          }
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _categoriesManager.GetCategoryByIdAsync(id);
 
             if (category == null)
             {
@@ -52,7 +48,6 @@ namespace WebShopRestService.Controllers
         }
 
         // PUT: api/Categories/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(int id, Category category)
         {
@@ -61,65 +56,41 @@ namespace WebShopRestService.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(category).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _categoriesManager.UpdateCategoryAsync(category);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (KeyNotFoundException)
             {
-                if (!CategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
         }
 
         // POST: api/Categories
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
-          if (_context.Categories == null)
-          {
-              return Problem("Entity set 'MyDbContext.Categories'  is null.");
-          }
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
+            await _categoriesManager.AddCategoryAsync(category);
 
-            return CreatedAtAction("GetCategory", new { id = category.CategoryId }, category);
+            return CreatedAtAction(nameof(GetCategory), new { id = category.CategoryId }, category);
         }
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            if (_context.Categories == null)
+            try
+            {
+                await _categoriesManager.DeleteCategoryAsync(id);
+            }
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool CategoryExists(int id)
-        {
-            return (_context.Categories?.Any(e => e.CategoryId == id)).GetValueOrDefault();
         }
     }
 }
