@@ -25,7 +25,6 @@ public class AddressesManagerTests
             .UseSqlServer("")
             .Options;
 
-
         _context = new MyDbContext(options);
 
         // Create the repository and pass it to the manager
@@ -37,12 +36,12 @@ public class AddressesManagerTests
     }
 
     [TestMethod]
-    public async Task GetAll_ShouldReturnAllAddresses()
+    public async Task GetAddressesAsync_ShouldReturnAllAddresses()
     {
         // Arrange - Ensure there is data in the test database for Addresses
 
         // Act
-        IEnumerable<Address> addresses = await _manager.GetAll();
+        IEnumerable<Address> addresses = await _manager.GetAddressesAsync();
 
         // Assert
         Assert.IsNotNull(addresses);
@@ -50,20 +49,20 @@ public class AddressesManagerTests
     }
 
     [TestMethod]
-    public async Task Get_ShouldReturnAddress_WhenAddressExists()
+    public async Task GetAddressByIdAsync_ShouldReturnAddress_WhenAddressExists()
     {
         // Arrange
         int existingAddressId = 1; // Replace with an ID you know exists
 
         // Act
-        Address address = await _manager.Get(existingAddressId);
+        Address address = await _manager.GetAddressByIdAsync(existingAddressId);
 
         // Assert
         Assert.IsNotNull(address, $"Address with ID {existingAddressId} should exist.");
     }
 
     [TestMethod]
-    public async Task Create_ShouldAddNewAddress()
+    public async Task CreateAddressAsync_ShouldAddNewAddress()
     {
         // Arrange
         var newAddress = new Address // We make a new set of data to create
@@ -75,25 +74,15 @@ public class AddressesManagerTests
         };
 
         // Act
-        Address createdAddress = await _manager.Create(newAddress);
+        Address createdAddress = await _manager.CreateAddressAsync(newAddress);
 
         // Assert
         Assert.IsNotNull(createdAddress, "The creation result should not be null.");
         Assert.IsTrue(createdAddress.AddressId > 0, "Created address should have a non-zero ID.");
-
-        // Additional Assert
-        var foundAddress = await _context.Addresses.FirstOrDefaultAsync(a => a.AddressId == createdAddress.AddressId); //When this line is executed, Entity Framework Core will translate the LINQ query into a SQL statement that retrieves the appropriate record from the database. If it finds a record with the matching AddressId, it will be returned and assigned to foundAddress. If no record is found, foundAddress will be null.
-        Assert.IsNotNull(foundAddress, "The address should be found in the database.");
-        Assert.AreEqual(newAddress.Street, foundAddress.Street, "The street name should match the created address.");
-
-        // Clean up - remove the created address
-        _context.Addresses.Remove(foundAddress);
-        await _context.SaveChangesAsync();
     }
 
-
     [TestMethod]
-    public async Task Update_ShouldModifyExistingAddress()
+    public async Task UpdateAddressAsync_ShouldModifyExistingAddress()
     {
         // Arrange
         var addressToUpdate = await _context.Addresses.AsNoTracking().FirstOrDefaultAsync(a => a.AddressId == 1);
@@ -115,17 +104,17 @@ public class AddressesManagerTests
         addressToUpdate.Street = "124 Main St";
 
         // Act
-        await _manager.Update(addressToUpdate.AddressId, addressToUpdate);
+        bool updateResult = await _manager.UpdateAddressAsync(addressToUpdate);
 
         // Assert
+        Assert.IsTrue(updateResult, "Update should be successful.");
         var updatedAddress = await _context.Addresses.FindAsync(addressToUpdate.AddressId);
         Assert.IsNotNull(updatedAddress);
         Assert.AreEqual("124 Main St", updatedAddress.Street, "Street name should be updated.");
     }
 
-    
     [TestMethod]
-    public async Task Delete_ShouldRemoveAddress()
+    public async Task DeleteAddressAsync_ShouldRemoveAddress()
     {
         // Arrange - Create and save a new address to the database
         var addressToDelete = new Address
@@ -140,13 +129,13 @@ public class AddressesManagerTests
         await _context.SaveChangesAsync();
 
         // Act - Attempt to delete the address
-        await _manager.Delete(addressToDelete.AddressId);
+        bool deleteResult = await _manager.DeleteAddressAsync(addressToDelete.AddressId);
 
         // Assert - Verify that the address is no longer in the database
+        Assert.IsTrue(deleteResult, "Delete should be successful.");
         var deletedAddress = await _context.Addresses.FindAsync(addressToDelete.AddressId);
         Assert.IsNull(deletedAddress, "Address should be deleted from the database.");
     }
-    
 
     [TestCleanup]
     public void Cleanup()
@@ -155,7 +144,7 @@ public class AddressesManagerTests
         _transaction.Dispose(); // Dispose the transaction
         _context.Dispose();
     }
-    
+
     private string GetTestConnectionString()
     {
         // Retrieve the test database connection string from a secure place

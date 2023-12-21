@@ -14,35 +14,45 @@ namespace WebShopRestService.Managers
             _addressesRepository = addressesRepository;
         }
 
-        public async Task<IEnumerable<Address>> GetAll()
+        public async Task<IEnumerable<Address>> GetAddressesAsync()
         {
             return await _addressesRepository.GetAllAddressesAsync();
         }
 
-        public async Task<Address> Get(int id)
+        public async Task<Address> GetAddressByIdAsync(int id)
         {
             return await _addressesRepository.GetAddressByIdAsync(id);
         }
 
-        public async Task Update(int id, Address address)
+        public async Task<bool> UpdateAddressAsync(Address address)
         {
+            var existingAddress = await _addressesRepository.GetAddressByIdAsync(address.AddressId);
+            if (existingAddress == null)
+            {
+                return false;
+            }
+
             await _addressesRepository.UpdateAddressAsync(address);
+            return true;
         }
 
-        public async Task<Address> Create(Address address)
+        public async Task<Address> CreateAddressAsync(Address address)
         {
             await _addressesRepository.AddAddressAsync(address);
             // Assuming the repository method does the SaveChangesAsync and returns the added entity
             return address;
         }
 
-        public async Task Delete(int id)
+        public async Task<bool> DeleteAddressAsync(int id)
         {
             var address = await _addressesRepository.GetAddressByIdAsync(id);
-            if (address != null)
+            if (address == null)
             {
-                await _addressesRepository.DeleteAddressAsync(address);
+                return false;
             }
+
+            await _addressesRepository.DeleteAddressAsync(address);
+            return true;
         }
     }
 }
