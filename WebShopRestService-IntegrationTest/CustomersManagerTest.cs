@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebShopRestService.Data;
 using WebShopRestService.Interfaces;
@@ -8,31 +11,27 @@ using WebShopRestService.Managers;
 using WebShopRestService.Models;
 using WebShopRestService.Repositories;
 
-namespace WebShopRestService.IntegrationTest
+[TestClass]
+public class CustomersManagerTest
 {
-    [TestClass]
-    public class CustomersManagerTest
+    private MyDbContext _context;
+    private ICustomersRepository _repository;
+    private CustomersManager _manager;
+    private IDbContextTransaction _transaction;
+
+    [TestInitialize]
+    public async Task InitializeAsync()
     {
-        private MyDbContext _context;
-        private ICustomersRepository _repository;
-        private CustomersManager _manager;
+        var options = new DbContextOptionsBuilder<MyDbContext>()
+            .UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False")
+            .Options;
 
-        [TestInitialize]
-        public void Initialize()
-        {
-            // Assuming we have a method to get the test connection string
-            // var connectionString = GetTestConnectionString();
+        _context = new MyDbContext(options);
+        _repository = new CustomersRepository(_context);
+        _manager = new CustomersManager(_repository);
+        _transaction = await _context.Database.BeginTransactionAsync();
+    }
 
-            var options = new DbContextOptionsBuilder<MyDbContext>()
-                .UseSqlServer("")
-                .Options;
-
-            _context = new MyDbContext(options);
-
-            // Create the repository and pass it to the manager
-            _repository = new CustomersRepository(_context);
-            _manager = new CustomersManager(_repository);
-        }
     [TestMethod]
     public async Task GetAll_ShouldReturnAllCustomers()
     {
@@ -43,43 +42,36 @@ namespace WebShopRestService.IntegrationTest
 
         // Assert
         Assert.IsNotNull(customers);
-        Assert.IsTrue(customers.Any(), "There should be at least one customer.");
+        Assert.IsTrue(customers.Any(), "Der bør være mindst én kunde.");
     }
 
     [TestMethod]
     public async Task Get_ShouldReturnCustomer_WhenCustomerExists()
     {
         // Arrange
-        int existingCustomerId = 1; // Replace with a known existing customer ID
+        int existingCustomerId = 1;
 
         // Act
         Customer customer = await _manager.Get(existingCustomerId);
 
         // Assert
-        Assert.IsNotNull(customer, $"Customer with ID {existingCustomerId} should exist.");
+        Assert.IsNotNull(customer, $"Kunde med ID {existingCustomerId} bør eksistere.");
     }
+
     [TestMethod]
     public async Task Create_ShouldAddNewCustomer()
     {
         // Arrange
-        var newCustomer = new Customer
-        {
-            FirstName = "Test",
-            LastName = "User",
-            Email = "test@example.com", // Make sure this is set to a non-null value
-            Phone = "1234567890",
-            AddressId = 1, // Assuming there is an Address with ID 1 in the database
-            // ... set other required properties
-        };
+        var newCustomer = await CreateTestCustomerAsync("Test", "User");
 
         // Act
         Customer createdCustomer = await _manager.Create(newCustomer);
 
         // Assert
-        Assert.IsNotNull(createdCustomer, "The creation result should not be null.");
-        Assert.IsTrue(createdCustomer.CustomerId > 0, "Created customer should have a non-zero ID.");
+        Assert.IsNotNull(createdCustomer, "Resultatet af oprettelsen bør ikke være null.");
+        Assert.IsTrue(createdCustomer.CustomerId > 0, "Oprettet kunde bør have et ikke-nul ID.");
 
-        // Clean up - remove the created customer
+        // Cleanup
         _context.Customers.Remove(createdCustomer);
         await _context.SaveChangesAsync();
     }
@@ -88,19 +80,8 @@ namespace WebShopRestService.IntegrationTest
     public async Task Update_ShouldModifyExistingCustomer()
     {
         // Arrange
-        var customerToUpdate = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == 1);
-        if (customerToUpdate == null)
-        {
-            customerToUpdate = new Customer
-            {
-                // Populate with customer data
-            };
-            _context.Customers.Add(customerToUpdate);
-            await _context.SaveChangesAsync();
-        }
-
-        // Make changes to the customer data
-        customerToUpdate.FirstName = "Updated Name";
+        var customerToUpdate = await CreateTestCustomerAsync("Eksisterende", "Bruger");
+        customerToUpdate.FirstName = "Opdateret Navn";
 
         // Act
         await _manager.Update(customerToUpdate.CustomerId, customerToUpdate);
@@ -108,9 +89,9 @@ namespace WebShopRestService.IntegrationTest
         // Assert
         var updatedCustomer = await _context.Customers.FindAsync(customerToUpdate.CustomerId);
         Assert.IsNotNull(updatedCustomer);
-        Assert.AreEqual("Updated Name", updatedCustomer.FirstName, "Customer name should be updated.");
+        Assert.AreEqual("Opdateret Navn", updatedCustomer.FirstName, "Kundens navn bør være opdateret.");
 
-        // Cleanup - remove the test data
+        // Cleanup
         _context.Customers.Remove(updatedCustomer);
         await _context.SaveChangesAsync();
     }
@@ -119,28 +100,82 @@ namespace WebShopRestService.IntegrationTest
     public async Task Delete_ShouldRemoveCustomer()
     {
         // Arrange
-        var customerToDelete = new Customer
-        {
-            // Populate with customer data
-        };
-        _context.Customers.Add(customerToDelete);
-        await _context.SaveChangesAsync();
+        var customerToDelete = await CreateTestCustomerAsync("Slet", "Bruger");
 
         // Act
         await _manager.Delete(customerToDelete.CustomerId);
 
         // Assert
         var deletedCustomer = await _context.Customers.FindAsync(customerToDelete.CustomerId);
-        Assert.IsNull(deletedCustomer, "Customer should be deleted from the database.");
+        Assert.IsNull(deletedCustomer, "Kunden bør være slettet fra databasen.");
     }
-   /* [TestCleanup]
-    public void Cleanup()
-    {
-        _context.Dispose();
-    }
-        // No TestCleanup needed since we are using ClassCleanup for disposing the context
-    */
 
+    private async Task<Customer> CreateTestCustomerAsync(string firstName, string lastName)
+{
+    var address = await EnsureAddressExists();
+    var userCredential = await EnsureUserCredentialExists();
+
+    // Create a new Customer instance without adding it to the context
+    return new Customer
+    {
+        FirstName = firstName,
+        LastName = lastName,
+        Email = $"temp{Guid.NewGuid()}@example.com", // Ensure unique email
+        Phone = "1234567890",
+        AddressId = address.AddressId,
+        UserId = userCredential.UserId
+    };
+}
+
+
+    private async Task<Address> EnsureAddressExists()
+    {
+        var address = await _context.Addresses.FirstOrDefaultAsync();
+        if (address == null)
+        {
+            address = new Address
+            {
+                Street = "123 Example St",
+                City = "ExampleCity",
+                PostalCode = "12345",
+                Country = "ExampleCountry"
+            };
+            _context.Addresses.Add(address);
+            await _context.SaveChangesAsync();
+        }
+        return address;
     }
-   
+
+    private async Task<UserCredential> EnsureUserCredentialExists()
+    {
+        var userCredential = await _context.UserCredentials.FirstOrDefaultAsync();
+        if (userCredential == null)
+        {
+            var role = await _context.Roles.FirstOrDefaultAsync();
+            if (role == null)
+            {
+                role = new Role { Name = "Customer", AccessLevel = 1 };
+                _context.Roles.Add(role);
+                await _context.SaveChangesAsync();
+            }
+
+            userCredential = new UserCredential
+            {
+                Username = "testuser",
+                HashedPassword = "hashedpassword",
+                UserId = role.RoleId
+            };
+            _context.UserCredentials.Add(userCredential);
+            await _context.SaveChangesAsync();
+        }
+        return userCredential;
+    }
+
+    [TestCleanup]
+    public async Task CleanupAsync()
+    {
+        await _transaction?.RollbackAsync();
+        _transaction?.Dispose();
+        _context?.Dispose();
+    }
 }
