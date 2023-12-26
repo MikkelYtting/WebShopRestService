@@ -36,7 +36,7 @@ namespace WebShopRestService_UnitTest.MockTest
         }
 
         [TestMethod]
-        public async Task GetAddressesAsync_ReturnsAllAddresses()
+        public async Task GetAddressesAsync_ReturnsAllAddresses() // ID 2
         {
             // Arrange
             _mockRepo.Setup(repo => repo.GetAllAddressesAsync()).ReturnsAsync(_mockAddresses);
@@ -49,7 +49,7 @@ namespace WebShopRestService_UnitTest.MockTest
         }
 
         [TestMethod]
-        public async Task GetAddressByIdAsync_ReturnsAddress()
+        public async Task GetAddressByIdAsync_ReturnsAddress() // ID 2
         {
             // Arrange
             var address = _mockAddresses[0];
@@ -63,7 +63,7 @@ namespace WebShopRestService_UnitTest.MockTest
         }
 
         [TestMethod]
-        public async Task UpdateAddressAsync_ExistingAddress_ReturnsTrue()
+        public async Task UpdateAddressAsync_ExistingAddress_ReturnsTrue() // ID 1
         {
             // Arrange
             var addressToUpdate = _mockAddresses[0];
@@ -78,7 +78,7 @@ namespace WebShopRestService_UnitTest.MockTest
         }
 
         [TestMethod]
-        public async Task CreateAddressAsync_AddsNewAddress()
+        public async Task CreateAddressAsync_AddsNewAddress() // ID 3
         {
             // Arrange
             var newAddress = new Address { AddressId = 3, Street = "789 Third St", City = "CityC", PostalCode = "12378", Country = "CountryC" };
@@ -92,7 +92,7 @@ namespace WebShopRestService_UnitTest.MockTest
         }
 
         [TestMethod]
-        public async Task DeleteAddressAsync_ExistingAddress_ReturnsTrue()
+        public async Task DeleteAddressAsync_ExistingAddress_ReturnsTrue() // ID 4
         {
             // Arrange
             var addressToDelete = _mockAddresses[0];
@@ -104,6 +104,50 @@ namespace WebShopRestService_UnitTest.MockTest
 
             // Assert
             Assert.IsTrue(result);
+        }
+        [TestMethod]
+        public async Task GetAddressByIdAsync_NonExistentId_ReturnsNull() // ID  35
+        {
+            // Arrange
+            _mockRepo.Setup(repo => repo.GetAddressByIdAsync(It.IsAny<int>())).ReturnsAsync((Address)null);
+
+            // Act
+            var result = await _manager.GetAddressByIdAsync(99); // Assuming 99 is a non-existent ID
+
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public async Task UpdateAddressAsync_NonExistentAddress_ReturnsFalse() // ID 35
+        {
+            // Arrange
+            var nonExistentAddress = new Address { AddressId = 99, /* ... other properties ... */ };
+            _mockRepo.Setup(repo => repo.GetAddressByIdAsync(nonExistentAddress.AddressId)).ReturnsAsync((Address)null);
+
+            // Act & Assert
+            Assert.ThrowsExceptionAsync<InvalidOperationException>(() => _manager.UpdateAddressAsync(nonExistentAddress));
+        }
+
+        [TestMethod]
+        public async Task DeleteAddressAsync_NonExistentId_ReturnsFalse() // ID 35
+        {
+            // Arrange
+            _mockRepo.Setup(repo => repo.GetAddressByIdAsync(It.IsAny<int>())).ReturnsAsync((Address)null);
+
+            // Act & Assert
+            Assert.ThrowsExceptionAsync<InvalidOperationException>(() => _manager.DeleteAddressAsync(99));
+        }
+
+        [TestMethod]
+        public async Task CreateAddressAsync_InvalidData_ThrowsException() // ID 36
+        {
+            // Arrange
+            var invalidAddress = new Address { /* Missing required fields */ };
+            // No setup needed for this test as the validation is expected to happen in the Manager, not the Repository
+
+            // Act & Assert
+            Assert.ThrowsExceptionAsync<ArgumentException>(() => _manager.CreateAddressAsync(invalidAddress));
         }
     }
 }
