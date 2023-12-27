@@ -27,7 +27,7 @@ public class UserCredentialTests
     [TestMethod]
     [DataRow("example@example.com")]
     [DataRow("user@example.net")]
-    //[DataRow(new string('a', 64) + "@example.com")] // 100 characters
+    //[DataRow("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")] // 100 'a's
     public void UserCredential_WithValidUsername_ShouldPassValidation(string username)
     {
         var userCredential = CreateUserCredential(username, "hashedPassword123", 1);
@@ -40,6 +40,7 @@ public class UserCredentialTests
     [DataRow("")]
     [DataRow("notanemail")]
     //[DataRow(new string('a', 101) + "@example.com")] // 101 characters, over the limit
+    [DataRow("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")] // 101 'a's
     public void UserCredential_WithInvalidUsername_ShouldFailValidation(string username)
     {
         var userCredential = CreateUserCredential(username, "hashedPassword123", 1);
@@ -51,6 +52,7 @@ public class UserCredentialTests
     // Test cases for HashedPassword
     [TestMethod]
     [DataRow("hashedPassword123")]
+    [DataRow("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")] // 255 'a's
     //[DataRow(new string('a', 255))] // Maximum valid length
     public void UserCredential_WithValidHashedPassword_ShouldPassValidation(string hashedPassword)
     {
@@ -62,6 +64,8 @@ public class UserCredentialTests
 
     [TestMethod]
     [DataRow("")]
+    [DataRow("")]
+    [DataRow("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")] // 256 'b's
     //[DataRow(new string('a', 256))] // 256 characters, over the limit
     public void UserCredential_WithInvalidHashedPassword_ShouldFailValidation(string hashedPassword)
     {

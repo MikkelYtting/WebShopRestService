@@ -24,6 +24,7 @@ namespace WebShopRestService.Models
 
         [Required(ErrorMessage = "Order ID is required.")]
         [ForeignKey("OrderTable")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be greater than zero.")]
         public int OrderId { get; set; }
 
         public OrderTable OrderTable { get; set; }
