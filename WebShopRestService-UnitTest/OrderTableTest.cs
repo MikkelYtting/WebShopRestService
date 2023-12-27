@@ -26,9 +26,10 @@ public class OrderTableTests
     }
 
     // Test cases for TotalAmount
+    //positiv
     [TestMethod]
     [DataRow(0.01)] // Minimum valid
-    [DataRow(500000.00)]
+    [DataRow(5000000.00)] // Middle range
     [DataRow(10000000.00)] // Maximum valid
     public void OrderTable_WithValidTotalAmount_ShouldPassValidation(double totalAmount)
     {
@@ -37,7 +38,8 @@ public class OrderTableTests
         Assert.IsTrue(result);
         Assert.AreEqual(0, validationResults.Count);
     }
-
+    
+    // Negativ
     [TestMethod]
     [DataRow(0.00)] // Below minimum
     [DataRow(-1.00)] // Negative value
@@ -53,7 +55,7 @@ public class OrderTableTests
     // Test cases for CustomerId
     [TestMethod]
     [DataRow(1)] // Minimum valid
-    [DataRow(100)]
+    [DataRow(100)] // Middle range
     [DataRow(int.MaxValue)] // Maximum valid integer
     public void OrderTable_WithValidCustomerId_ShouldPassValidation(int customerId)
     {
@@ -74,7 +76,52 @@ public class OrderTableTests
         Assert.IsTrue(validationResults.Count > 0);
     }
 
-    // Similar test cases can be created for DeliveryAddressId
-    // Note: OrderDate is not easy to test for edge cases unless you have specific business rules for it.
-}
+    // Test cases for DeliveryAddressId
+    [TestMethod]
+    [DataRow(1)] // Minimum valid
+    [DataRow(100)] // Middle range
+    [DataRow(int.MaxValue)] // Maximum valid integer
+    public void OrderTable_WithValidDeliveryAddressId_ShouldPassValidation(int deliveryAddressId)
+    {
+        var orderTable = CreateOrderTable(DateTime.Now, 100.00m, 1, deliveryAddressId);
+        var result = TryValidateModel(orderTable, out var validationResults);
+        Assert.IsTrue(result);
+        Assert.AreEqual(0, validationResults.Count);
+    }
 
+    [TestMethod]
+    [DataRow(0)] // Zero, might be invalid
+    [DataRow(-1)] // Negative value
+    public void OrderTable_WithInvalidDeliveryAddressId_ShouldFailValidation(int deliveryAddressId)
+    {
+        var orderTable = CreateOrderTable(DateTime.Now, 100.00m, 1, deliveryAddressId);
+        var result = TryValidateModel(orderTable, out var validationResults);
+        Assert.IsFalse(result);
+        Assert.IsTrue(validationResults.Count > 0);
+    }
+    [TestMethod]
+    public void OrderTable_WithValidOrderDate_ShouldPassValidation()
+    {
+        var orderTable = CreateOrderTable(DateTime.Now, 100.00m, 1, 1);
+        var result = TryValidateModel(orderTable, out var validationResults);
+        Assert.IsTrue(result);
+        Assert.AreEqual(0, validationResults.Count);
+    }
+
+    [TestMethod]
+    public void OrderTable_WithFutureOrderDate_ShouldFailOrPassValidation()
+    {
+        var orderTable = CreateOrderTable(DateTime.Now.AddDays(1), 100.00m, 1, 1); // Future date
+        var result = TryValidateModel(orderTable, out var validationResults);
+        
+    }
+
+    [TestMethod]
+    public void OrderTable_WithPastOrderDate_ShouldPassValidation()
+    {
+        var orderTable = CreateOrderTable(DateTime.Now.AddDays(-1), 100.00m, 1, 1); // Past date
+        var result = TryValidateModel(orderTable, out var validationResults);
+        Assert.IsTrue(result);
+        Assert.AreEqual(0, validationResults.Count);
+    }
+}
