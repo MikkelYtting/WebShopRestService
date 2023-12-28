@@ -54,3 +54,24 @@ jobs:
       env:
         TEST_CONNECTION_STRING: "Server=localhost,1433;Database=WebshopDatabase;User ID=SA;Password=${{ secrets.SQL_SERVER_PASSWORD }};TrustServerCertificate=True;"
       run: dotnet test --verbosity normal ./WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
+
+    - name: Connect to SQL Server and Retrieve Table Data
+      run: |
+        # Install SQL Server command-line tools
+        sudo apt-get update
+        sudo apt-get install -y mssql-tools unixodbc-dev
+        
+        # Define SQL Server connection parameters
+        server=localhost,1433
+        user=SA
+        password="${{ secrets.SQL_SERVER_PASSWORD }}"
+        database=WebshopDatabase
+
+        # Define a SQL query to retrieve data from all tables
+        query="SELECT * FROM INFORMATION_SCHEMA.TABLES"
+
+        # Run the SQL query and store the result in a file
+        /opt/mssql-tools/bin/sqlcmd -S $server -U $user -P $password -d $database -Q "$query" -o tables_data.txt
+
+        # Display the contents of the result file
+        cat tables_data.txt
