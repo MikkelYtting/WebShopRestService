@@ -30,10 +30,15 @@ jobs:
 
     - name: Wait for SQL Server to become available
       run: |
-        until /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -Q "SELECT 1" > /dev/null 2>&1; do
+        for i in {1..60}; do # Wait up to 5 minutes
+          /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -Q "SELECT 1" && echo "SQL Server is up!" && break
           echo "Waiting for SQL Server to start..."
           sleep 5
         done
+        if [ $i -eq 60 ]; then
+          echo "SQL Server failed to start."
+          exit 1
+        fi
 
     - name: Execute Database Creation Script
       run: |
