@@ -27,7 +27,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y mssql-tools unixodbc-dev
-
+        
     - name: Wait for SQL Server to become available
       run: |
         timeout=30 # Set a timeout of 30 seconds for SQL Server to start
@@ -41,17 +41,17 @@ jobs:
           fi
         done
         echo "SQL Server is up and running!"
-
+        
     - name: Execute Database Creation Script
       run: |
         /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i ./WebShopRestService/Data/CreateScript.sql
-
+        
     - name: Execute Database Seeding Script
       run: |
         /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i ./WebShopRestService/Data/InsertScript.sql
-
+        
     - name: Build project
       run: dotnet build --configuration Release ./WebShopRestService
 
     - name: Run integration tests
-      run: dotnet test --no-build --verbosity normal ./WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
+      run: dotnet test --verbosity detailed ./WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
