@@ -1,0 +1,4 @@
+
+_csharpsquid:S3903"6Move 'OrderTablesManagerTests' into a named namespace.(Õ„“¼øÿÿÿÿ8¢ÀŞÊ1
+hcsharpsquid:S2589B"DChange this condition so that it does not always evaluate to 'True'.(Äß”î8¢ÀŞÊ1
+\csharpsquid:S1144Ÿ"7Remove the unused private method 'GetConnectionString'.(¶õ€€8¢ÀŞÊ1

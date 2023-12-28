@@ -1,0 +1,13 @@
+z
+q/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/AddressesManagerTest.csutf-8{
+r/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/CategoriesManagerTest.csutf-8z
+q/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/CustomersManagerTest.csutf-8r
+i/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/GlobalUsings.csutf-8{
+r/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/OrderItemsManagerTest.csutf-8|
+s/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/OrderTablesManagerTest.csutf-8y
+p/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/ProductsManagerTest.csutf-8v
+m/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/RolesManagerTest.csutf-8É
+x/Users/tobiaspoulsen/.nuget/packages/microsoft.net.test.sdk/17.8.0/build/netcoreapp3.1/Microsoft.NET.Test.Sdk.Program.csutf-8´
+ü/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/obj/Debug/net7.0/WebShopRestService-IntegrationTest.GlobalUsings.g.csutf-8•
+ô/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/obj/Debug/net7.0/.NETCoreApp,Version=v7.0.AssemblyAttributes.csutf-8©
+ù/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/obj/Debug/net7.0/WebShopRestService-IntegrationTest.AssemblyInfo.csutf-8

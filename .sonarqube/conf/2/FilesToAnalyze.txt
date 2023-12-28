@@ -1,0 +1,14 @@
+﻿/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/AddressesManagerTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/CategoriesManagerTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/CustomersManagerTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/GlobalUsings.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/OrderItemsManagerTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/OrderTablesManagerTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/ProductsManagerTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/RolesManagerTest.cs
+/Users/tobiaspoulsen/.nuget/packages/microsoft.net.test.sdk/17.8.0/build/netcoreapp3.1/Microsoft.NET.Test.Sdk.Program.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/appsettings.json
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-IntegrationTest/coverage.opencover.xml
+/Users/tobiaspoulsen/.nuget/packages/mstest.testadapter/3.1.1/build/net6.0/Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+/Users/tobiaspoulsen/.nuget/packages/mstest.testadapter/3.1.1/build/net6.0/Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+/Users/tobiaspoulsen/.nuget/packages/mstest.testadapter/3.1.1/build/net6.0/Microsoft.TestPlatform.AdapterUtilities.dll

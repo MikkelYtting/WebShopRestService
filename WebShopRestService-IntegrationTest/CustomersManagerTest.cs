@@ -24,7 +24,7 @@ namespace WebShopRestService.IntegrationTest
             // var connectionString = GetTestConnectionString();
 
             var options = new DbContextOptionsBuilder<MyDbContext>()
-                .UseSqlServer("")
+                .UseSqlServer("\"Server=tcp:webrestdb.database.windows.net,1433;Initial Catalog=WebRestDB;Persist Security Info=False;User ID=tub2508;Password=Bubber240811;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;\"")
                 .Options;
 
             _context = new MyDbContext(options);
