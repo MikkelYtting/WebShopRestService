@@ -11,21 +11,15 @@ namespace YourNamespace.Tests
         private RandomQuotesApiClient _apiClient;
         private string _apiKey;
 
-        [TestInitialize]
-        public void Setup()
+        [TestInitialize]public void Setup()
         {
-            // Build configuration
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json")
-                .Build();
+            // Retrieve the API key from environment variables
+            _apiKey = Environment.GetEnvironmentVariable("API_KEY") 
+                      ?? throw new InvalidOperationException("API key not found in environment variables");
 
-            // Retrieve the API key from configuration
-            _apiKey = configuration["API_KEY"] ?? throw new InvalidOperationException("API key not found in configuration");
-
-            // Initialize the API client
             _apiClient = new RandomQuotesApiClient(new HttpClient(), _apiKey);
         }
+
 
         [TestMethod]
         public async Task GetRandomQuotesAsync_ShouldReturnQuotes()
