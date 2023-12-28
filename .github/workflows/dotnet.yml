@@ -58,3 +58,7 @@ jobs:
       env:
         TEST_CONNECTION_STRING: "Server=localhost,1433;Database=WebshopDatabase;User ID=SA;Password=${{ secrets.SQL_SERVER_PASSWORD }};TrustServerCertificate=True;"
       run: dotnet test --verbosity normal ./WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
+
+    - name: View All Tables Contents
+      run: |
+        /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -d WebshopDatabase -Q "SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE';"
