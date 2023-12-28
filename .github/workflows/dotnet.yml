@@ -30,7 +30,7 @@ jobs:
 
     - name: Wait for SQL Server to become available
       run: |
-        timeout=90 # Set a timeout of 90 seconds for SQL Server to start
+        timeout=30 # Set a timeout of 90 seconds for SQL Server to start
         until /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -Q "SELECT 1" > /dev/null 2>&1; do
           echo "Waiting for SQL Server to start..."
           sleep 5
