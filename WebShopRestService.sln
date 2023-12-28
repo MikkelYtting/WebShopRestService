@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebShopRestService-UnitTest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebShopRestService-IntegrationTest", "WebShopRestService-IntegrationTest\WebShopRestService-IntegrationTest.csproj", "{CF85473F-8E14-4650-BCCA-D498831525D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EksternAPIIntegrationAndUnitTest", "EksternAPIIntegrationAndUnitTest\EksternAPIIntegrationAndUnitTest.csproj", "{8287C422-A34B-47C6-B3DD-6CEDF12DF407}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{CF85473F-8E14-4650-BCCA-D498831525D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF85473F-8E14-4650-BCCA-D498831525D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF85473F-8E14-4650-BCCA-D498831525D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8287C422-A34B-47C6-B3DD-6CEDF12DF407}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8287C422-A34B-47C6-B3DD-6CEDF12DF407}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8287C422-A34B-47C6-B3DD-6CEDF12DF407}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8287C422-A34B-47C6-B3DD-6CEDF12DF407}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
