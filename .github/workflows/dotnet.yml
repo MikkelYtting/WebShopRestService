@@ -47,4 +47,6 @@ jobs:
       run: dotnet build --configuration Release ./WebShopRestService
 
     - name: Run integration tests
-      run: dotnet test --no-build --verbosity normal ./WebShopRestService-IntegrationTest
+      run: dotnet test --no-build --verbosity normal ./WebShopRestService-IntegrationTest/TestArtifacts/WebShopRestService-IntegrationTest.dll
+
+
