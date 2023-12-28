@@ -36,7 +36,8 @@ jobs:
           sleep 5
         done
         if [ $i -eq 60 ]; then
-          echo "SQL Server failed to start."
+          echo "SQL Server failed to start. Printing logs for debugging:"
+          docker logs sql-server
           exit 1
         fi
 
