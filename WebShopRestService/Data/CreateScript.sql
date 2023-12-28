@@ -1,4 +1,5 @@
-﻿-- Categories Table
+﻿CREATE DATABASE WebshopDatabase;
+-- Categories Table
 CREATE TABLE Categories (
     CategoryID INT PRIMARY KEY IDENTITY(1,1),
     Name VARCHAR(255),
