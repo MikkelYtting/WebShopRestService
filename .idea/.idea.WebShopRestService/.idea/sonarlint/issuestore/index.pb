@@ -77,3 +77,11 @@ _
 /WebShopRestService/appsettings.Development.json,8/2/82da1c9534b538a88403889a35bdfea8e682e801
 [
 +WebShopRestService-UnitTest/CustomerTest.cs,7/4/7437e4c8f90a57e1c05d2601fc6bf8d853245055
+a
+1WebShopRestService-UnitTest/UserCredentialTest.cs,2/c/2cc5ae8b09166af1a7834d51374f6cedbcd89946
+W
+'WebShopRestService-UnitTest/RoleTest.cs,a/d/ad92650186fea1cb14f18b0140dc54ead85fac7e
+_
+/WebShopRestService-UnitTest/ProductAuditTest.cs,a/c/acf76513e9fe02a445ee059f0f6a45a5ff1b92a4
+]
+-WebShopRestService-UnitTest/OrderTableTest.cs,9/7/97bc4e494b86c49ec82a46ab2fa0fb021728780a

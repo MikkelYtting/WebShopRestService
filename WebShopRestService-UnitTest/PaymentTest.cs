@@ -43,7 +43,6 @@ public class PaymentTests
     [DataRow("")]
     [DataRow(null)]
     [DataRow("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")] // 101 'a's
-    //[DataRow("a" + new string('a', 101))] // 101 characters, over the limit
     public void Payment_WithInvalidPaymentMethod_ShouldFailValidation(string paymentMethod)
     {
         var payment = CreatePayment(paymentMethod, DateTime.Now, 100.00m, 1);
@@ -52,13 +51,33 @@ public class PaymentTests
         Assert.IsTrue(validationResults.Count > 0);
     }
 
+    // Test cases for PaymentDate
+    [TestMethod]
+    [DataRow("2022-01-01")]
+    [DataRow("2023-12-12")] // Assuming this date is not in the future relative to the test execution date
+    public void Payment_WithValidPaymentDate_ShouldPassValidation(string dateString)
+    {
+        var paymentDate = DateTime.Parse(dateString);
+        var payment = CreatePayment("Credit Card", paymentDate, 100.00m, 1);
+        var result = TryValidateModel(payment, out var validationResults);
+        Assert.IsTrue(result);
+        Assert.AreEqual(0, validationResults.Count);
+    }
+
+    [TestMethod]
+    public void Payment_WithFuturePaymentDate_ShouldFailOrPassValidation()
+    {
+        var futureDate = DateTime.Now.AddDays(1); // Date in the future
+        var payment = CreatePayment("Credit Card", futureDate, 100.00m, 1);
+        var result = TryValidateModel(payment, out var validationResults);
+        // Assert based on your business rule: Assert.IsTrue(result) or Assert.IsFalse(result)
+    }
+
     // Test cases for Amount
     [TestMethod]
     [DataRow(0.01)] // Minimum valid
-    [DataRow(1000.00)]
-    //[DataRow(double.MaxValue)] // Maximum valid
-    //[DataRow(79228162514264337593543950335m)] // Large decimal value within range
-    [DataRow(1e+18)] // High but convertible to decimal
+    [DataRow(1000.00)] // Middle range
+    [DataRow(1e+18)] // High but valid
     public void Payment_WithValidAmount_ShouldPassValidation(double amount)
     {
         var payment = CreatePayment("Credit Card", DateTime.Now, (decimal)amount, 1);
@@ -78,8 +97,27 @@ public class PaymentTests
         Assert.IsTrue(validationResults.Count > 0);
     }
 
-    // Similar test cases can be created for OrderId
-    // PaymentDate is a required field but without specific range constraints, 
-    
-}
+    // Test cases for OrderId
+    [TestMethod]
+    [DataRow(1)] // Minimum valid
+    [DataRow(100)] // Middle range
+    [DataRow(int.MaxValue)] // Maximum valid
+    public void Payment_WithValidOrderId_ShouldPassValidation(int orderId)
+    {
+        var payment = CreatePayment("Credit Card", DateTime.Now, 100.00m, orderId);
+        var result = TryValidateModel(payment, out var validationResults);
+        Assert.IsTrue(result);
+        Assert.AreEqual(0, validationResults.Count);
+    }
 
+    [TestMethod]
+    [DataRow(0)] // Zero, invalid
+    [DataRow(-1)] // Negative value
+    public void Payment_WithInvalidOrderId_ShouldFailValidation(int orderId)
+    {
+        var payment = CreatePayment("Credit Card", DateTime.Now, 100.00m, orderId);
+        var result = TryValidateModel(payment, out var validationResults);
+        Assert.IsFalse(result);
+        Assert.IsTrue(validationResults.Count > 0);
+    }
+}

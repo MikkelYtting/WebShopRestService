@@ -1,5 +1,5 @@
 
 ]csharpsquid:S3903
-"4Move 'AddressesManagerTests' into a named namespace.(šá¸Öüÿÿÿÿ8îûÓ´Ê1
-ecsharpsquid:S1144”";Remove the unused private method 'GetTestConnectionString'.(¼¬´öúÿÿÿÿ8îûÓ´Ê1
-Bcsharpsquid:S125"Remove this commented out code.(â¹Ùš8ôÎµÊ1
+"4Move 'AddressesManagerTests' into a named namespace.(šá¸Öüÿÿÿÿ8ĞúŸÿÊ1
+ecsharpsquid:S1144­";Remove the unused private method 'GetTestConnectionString'.(¼¬´öúÿÿÿÿ8ĞúŸÿÊ1
+Bcsharpsquid:S125"Remove this commented out code.(â¹Ùš8ĞúŸÿÊ1

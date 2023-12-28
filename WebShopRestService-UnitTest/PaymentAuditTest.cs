@@ -29,7 +29,7 @@ public class PaymentAuditTests
     // Test cases for OrderId
     [TestMethod]
     [DataRow(1)] // Minimum valid
-    [DataRow(100)]
+    [DataRow(100)] // Middle range
     [DataRow(int.MaxValue)] // Maximum valid integer
     public void PaymentAudit_WithValidOrderId_ShouldPassValidation(int orderId)
     {
@@ -40,7 +40,7 @@ public class PaymentAuditTests
     }
 
     [TestMethod]
-    [DataRow(0)] // Invalid as per the model
+    [DataRow(0)] // Zero, invalid
     [DataRow(-1)] // Negative value
     public void PaymentAudit_WithInvalidOrderId_ShouldFailValidation(int orderId)
     {
@@ -53,6 +53,7 @@ public class PaymentAuditTests
     // Test cases for Amount
     [TestMethod]
     [DataRow(0.01)] // Minimum valid
+    [DataRow(500000.00)] // Middle range
     [DataRow(1000000.00)] // Maximum valid
     public void PaymentAudit_WithValidAmount_ShouldPassValidation(double amount)
     {
@@ -63,8 +64,9 @@ public class PaymentAuditTests
     }
 
     [TestMethod]
-    [DataRow(0.00)] // Invalid as per the model
+    [DataRow(0.00)] // Below minimum
     [DataRow(-1.00)] // Negative value
+    [DataRow(1000000.01)] // Above maximum
     public void PaymentAudit_WithInvalidAmount_ShouldFailValidation(double amount)
     {
         var paymentAudit = CreatePaymentAudit(1, DateTime.Now, (decimal)amount, "Payment", DateTime.Now);
@@ -72,11 +74,15 @@ public class PaymentAuditTests
         Assert.IsFalse(result);
         Assert.IsTrue(validationResults.Count > 0);
     }
+
     // Test cases for ActionType
     [TestMethod]
     [DataRow("Payment")]
     [DataRow("Refund")]
     [DataRow("Adjustment")]
+    [DataRow("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")] // 50 'a's, maximum valid length
+    [DataRow("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")] // 49 'b's Just Below Maximum
+    [DataRow("bbbbbbbbbbbbbbbbbbbbbbb")] // 25 'b's middle of range
     public void PaymentAudit_WithValidActionType_ShouldPassValidation(string actionType)
     {
         var paymentAudit = CreatePaymentAudit(1, DateTime.Now, 100.00m, actionType, DateTime.Now);
@@ -90,6 +96,8 @@ public class PaymentAuditTests
     [DataRow("123Payment")]
     [DataRow("Payment!@#")]
     [DataRow(" ")]
+    [DataRow("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")] // 51 'a's, above max
+    [DataRow(null)]
     public void PaymentAudit_WithInvalidActionType_ShouldFailValidation(string actionType)
     {
         var paymentAudit = CreatePaymentAudit(1, DateTime.Now, 100.00m, actionType, DateTime.Now);
@@ -120,5 +128,4 @@ public class PaymentAuditTests
         Assert.IsFalse(result);
         Assert.IsTrue(validationResults.Count > 0);
     }
-
 }

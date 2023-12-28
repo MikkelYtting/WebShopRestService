@@ -31,6 +31,8 @@ public class ProductTests
     [DataRow("Laptop")]
     [DataRow("Smartphone")]
     [DataRow("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")] // 100 'a's
+    [DataRow("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")] // 99 'a's
+
     public void Product_WithName_ShouldPassValidation(string name)
     {
         var product = CreateProduct(name, "Some Description", "img.jpg", 100.00m, 10, 1);
@@ -54,6 +56,7 @@ public class ProductTests
     // Test cases for Price
     [TestMethod]
     [DataRow(0.01)] // Minimum valid
+    [DataRow(500000.00)] // middle range
     [DataRow(1000000.00)] // Maximum valid
     public void Product_WithValidPrice_ShouldPassValidation(double price)
     {

@@ -54,7 +54,7 @@ public class OrderItemsManagerTest
         var newOrderItem = new OrderItem
         {
             // Populate order item details
-            ProductId = 1, Quantity = 10, Price = 20.0M
+            ProductId = 11, Quantity = 10, Price = 20.0M
         };
 
         // Act
