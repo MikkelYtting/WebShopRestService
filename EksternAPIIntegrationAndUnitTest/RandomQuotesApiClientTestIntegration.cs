@@ -1,8 +1,7 @@
-using System;
+using Microsoft.Extensions.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json.Linq;
 
 namespace YourNamespace.Tests
 {
@@ -10,13 +9,17 @@ namespace YourNamespace.Tests
     public class RandomQuotesApiClientIntegrationTest
     {
         private RandomQuotesApiClient _apiClient;
-        private readonly string _apiKey = "08f181344fmsh5c49b56b80636eep121031jsn470b5d9190df"; // Replace with your actual API key
+        private string _apiKey;
 
-        [TestInitialize]
-        public void Setup()
+        [TestInitialize]public void Setup()
         {
+            // Retrieve the API key from environment variables
+            _apiKey = Environment.GetEnvironmentVariable("API_KEY") 
+                      ?? throw new InvalidOperationException("API key not found in environment variables");
+
             _apiClient = new RandomQuotesApiClient(new HttpClient(), _apiKey);
         }
+
 
         [TestMethod]
         public async Task GetRandomQuotesAsync_ShouldReturnQuotes()

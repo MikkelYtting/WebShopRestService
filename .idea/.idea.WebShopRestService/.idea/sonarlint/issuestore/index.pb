@@ -103,3 +103,11 @@ q
 AEksternAPIIntegrationAndUnitTest/RandomQuotesApiClientTestUnit.cs,f/d/fd561566d4f0ba74b70154729c5f41b536714a07
 x
 HEksternAPIIntegrationAndUnitTest/EksternAPIIntegrationAndUnitTest.csproj,d/5/d588a52af69b68e5403aabecc511ba6c823b7472
+U
+%EksternAPIIntegrationAndUnitTest/.env,7/c/7c2dfd39e981f1f6ed2e3e97c36472a3f30d2bcf
+a
+1EksternAPIIntegrationAndUnitTest/EnvFileLoader.cs,7/8/7849a90032249949d86fd8898d6b8d70d24c48f3
+a
+1EksternAPIIntegrationAndUnitTest/appsettings.json,9/c/9c1b1ed8d1b084800158c18c54a4aa4d54e286dc
+`
+0EksternAPIIntegrationAndUnitTest/GlobalUsings.cs,e/0/e0fbd694ff244b3c010a278e2aa389c3e2cd4a0f
