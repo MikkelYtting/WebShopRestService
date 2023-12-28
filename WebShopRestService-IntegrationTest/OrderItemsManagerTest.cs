@@ -29,7 +29,7 @@ public class OrderItemsManagerTest
         // .Options;
         // Local database
         var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False")
+            .UseSqlServer("\"Server=tcp:webrestdb.database.windows.net,1433;Initial Catalog=WebRestDB;Persist Security Info=False;User ID=tub2508;Password=Bubber240811;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;\"")
             .Options;
 
         _context = new MyDbContext(options);

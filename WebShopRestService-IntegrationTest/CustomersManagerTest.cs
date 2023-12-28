@@ -32,6 +32,8 @@ public class CustomersManagerTest
         _transaction = await _context.Database.BeginTransactionAsync();
     }
 
+
+
     [TestMethod]
     public async Task GetAll_ShouldReturnAllCustomers()
     {

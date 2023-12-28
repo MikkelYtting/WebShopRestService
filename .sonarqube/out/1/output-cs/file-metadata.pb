@@ -1,0 +1,20 @@
+j
+a/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/AddressTest.csutf-8l
+c/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/CatergoryTest.csutf-8k
+b/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/CustomerTest.csutf-8k
+b/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/GlobalUsings.csutf-8z
+q/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/MockTest/AddressManagerTest.csutf-8~
+u/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/MockTest/OrderTableManagerTests.csutf-8x
+o/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/Notes on TryValidateModel.csutf-8l
+c/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/OrderItemTest.csutf-8m
+d/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/OrderTableTest.csutf-8o
+f/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/PaymentAuditTest.csutf-8j
+a/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/PaymentTest.csutf-8o
+f/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/ProductAuditTest.csutf-8j
+a/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/ProductTest.csutf-8g
+^/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/RoleTest.csutf-8q
+h/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/UserCredentialTest.csutf-8É
+x/Users/tobiaspoulsen/.nuget/packages/microsoft.net.test.sdk/17.8.0/build/netcoreapp3.1/Microsoft.NET.Test.Sdk.Program.csutf-8ù
+ë/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/obj/Debug/net7.0/WebShopRestService-UnitTest.GlobalUsings.g.csutf-8û
+í/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/obj/Debug/net7.0/.NETCoreApp,Version=v7.0.AssemblyAttributes.csutf-8õ
+è/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/obj/Debug/net7.0/WebShopRestService-UnitTest.AssemblyInfo.csutf-8
