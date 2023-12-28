@@ -44,7 +44,7 @@ jobs:
         /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i ./WebShopRestService/Data/InsertScript.sql
 
     - name: Build project
-      run: dotnet build --configuration Release
+      run: dotnet build --configuration Release ./WebShopRestService
 
-    - name: Run tests
-      run: dotnet test --no-build --verbosity normal
+    - name: Run integration tests
+      run: dotnet test --no-build --verbosity normal ./WebShopRestService-IntegrationTest
