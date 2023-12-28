@@ -21,7 +21,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '7.0' 
+        dotnet-version: '7.0'
 
     - name: Install SQL Server command-line tools
       run: |
@@ -56,5 +56,5 @@ jobs:
 
     - name: Run integration tests
       env:
-        TEST_CONNECTION_STRING: "Server=localhost,1433;Database=WebshopDatabase;User Id=SA;Password=${{ secrets.SQL_SERVER_PASSWORD }};"
+        TEST_CONNECTION_STRING: "Server=localhost,1433;Database=WebshopDatabase;User ID=SA;Password=${{ secrets.SQL_SERVER_PASSWORD }};TrustServerCertificate=True;"
       run: dotnet test --verbosity normal ./WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
