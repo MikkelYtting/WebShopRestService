@@ -27,7 +27,7 @@ public class CustomersManagerTest
                                ?? "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"; // Fallback to local connection string
 
         var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseSqlServer(connectionString)
+            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
             .Options;
 
         _context = new MyDbContext(options);

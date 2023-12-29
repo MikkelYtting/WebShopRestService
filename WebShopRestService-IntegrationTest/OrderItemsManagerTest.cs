@@ -25,7 +25,7 @@ public class OrderItemsManagerTest
                                ?? "YourLocalConnectionString"; // Fallback to local connection string if env var is not set
 
         var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseSqlServer(connectionString)
+            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
             .Options;
 
         _context = new MyDbContext(options);
