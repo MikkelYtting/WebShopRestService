@@ -92,7 +92,6 @@ INSERT INTO Products (Name, Description, Price, StockQuantity, CategoryID, Img) 
 ('Sliced Bread', 'Fresh bread right from the bakery', 13.99, 1000, 9, 'https://www.tornado-studios.com/sites/default/files/styles/slider_full/public/products/2028/gallery/sliced_bread_in_bag_thumbnail_square_0000.jpg?itok=v_xPdFUU'),
 ('Cat Food', 'Nutritional food for cats', 49.99, 200, 10, 'https://headsupfortails.com/cdn/shop/files/WhiskasOceanFishAdultDryCatFood_f5bbf1f9-31dd-433e-99bd-00582d979f60.jpg?v=1683109071'),
 ('Dog Food', 'Nutritional food for dogs', 49.99, 200, 10, 'https://pedigreeclub.in/cdn/shop/products/B00LHS884Y.MAIN.jpg?v=1673452671')
-GO
 
 -- Insert data into OrderTables
 INSERT INTO OrderTables (OrderDate, TotalAmount, CustomerID, DeliveryAddressID) VALUES
