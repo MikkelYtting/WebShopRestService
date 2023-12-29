@@ -8,5 +8,8 @@ namespace WebShopRestService_IntegrationTest
 {
     internal class ProductsManagerTest
     {
+
+
+
     }
 }

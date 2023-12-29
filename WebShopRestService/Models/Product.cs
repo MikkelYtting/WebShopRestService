@@ -44,4 +44,6 @@ namespace WebShopRestService.Models
         // Assuming there can be products not yet ordered
         public ICollection<OrderItem> OrderItems { get; set; }
     }
+
+
 }
