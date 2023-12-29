@@ -1,7 +1,11 @@
-﻿-- Insert data into Roles
+﻿USE WebshopDatabase;
+GO
+
+-- Insert data into Roles
 INSERT INTO Roles (Name, AccessLevel) VALUES
 ('Administrator', 1),
 ('Customer', 2);
+GO
 
 -- Insert data into Categories
 INSERT INTO Categories (Name, Description) VALUES
@@ -15,6 +19,7 @@ INSERT INTO Categories (Name, Description) VALUES
 ('Automotive', 'Car accessories and parts'),
 ('Groceries', 'Food and beverages'),
 ('Pet Supplies', 'Pet food and accessories');
+GO
 
 -- Insert data into Addresses
 INSERT INTO Addresses (Street, City, PostalCode, Country) VALUES
@@ -28,19 +33,21 @@ INSERT INTO Addresses (Street, City, PostalCode, Country) VALUES
 ('505 Spruce St', 'Westtown', '89012', 'USA'),
 ('606 Ash St', 'Easttown', '90123', 'USA'),
 ('707 Willow St', 'Northtown', '01234', 'USA');
+GO
 
 -- Insert data into UserCredentials
 INSERT INTO UserCredentials (Username, HashedPassword, RoleID) VALUES
-('johnsmith', '$2y$10$C71rnVup16j0MtlJIi145ux/HENKNqc1MnVf032EMq1FuprATKfQK', 1),
-('emilyjones', '$2y$10$hGvKxJ7r47ptkQpGkL8TTunaYzgKC7CP0iIe0g2AlnTZWLlRR5h6a', 2),
-('michaelbrown', '$2y$10$9wSZEWgVz3qymgWD5KA5EuCp/t1ydyVDEW4cPLLjcATx7zzhJC06y', 2),
-('hannahwhite', '$2y$10$FG4bLPMXHIUe651/sSOvqeMxNGwGQ4RqZDnR25R/s7EcNEro0rKSe', 2),
-('daviddavis', '$2y$10$SMDPPgYIgkHDf5w566IXP.BvFK7ltTz5vQUa8ZwUHBU7mvvDzvzxe', 2),
-('user6', '$2y$10$npXGkZlFibeZIunoi19s2e8OHmDBzHHhAbqKLE7vcGtNAlA8QggHa', 2),
-('user7', '$2y$10$ou6ac1L6LoHNIjq7o3UtNuHHGdO0BDBV21adyUFEcyQDggI1A5S36', 2),
-('user8', '$2y$10$lGGUgJTwYutv5QcEaWwd9uycfOXtHIaMD8XzyYJ7DarqSyrRqGXgC', 2),
-('user9', '$2y$10$.RlyM4Ku9sJ9d.g3nk8tKOijsCXgwNB3.apQCVCJExoM/Doc6NF7.', 2),
-('user10', '$2y$10$e4AuwIYHL9tOQUCElOWzxexnECMdulStp.Prz/QfUlrmHbLSJBLW6', 2);
+('johnsmith', 'HASHED_PASSWORD_HERE', 1),
+('emilyjones', 'HASHED_PASSWORD_HERE', 2),
+('michaelbrown', 'HASHED_PASSWORD_HERE', 2),
+('hannahwhite', 'HASHED_PASSWORD_HERE', 2),
+('daviddavis', 'HASHED_PASSWORD_HERE', 2),
+('user6', 'HASHED_PASSWORD_HERE', 2),
+('user7', 'HASHED_PASSWORD_HERE', 2),
+('user8', 'HASHED_PASSWORD_HERE', 2),
+('user9', 'HASHED_PASSWORD_HERE', 2),
+('user10', 'HASHED_PASSWORD_HERE', 2);
+GO
 
 -- Insert data into Customers
 INSERT INTO Customers (FirstName, LastName, Email, Phone, AddressID, UserID) VALUES
@@ -54,8 +61,10 @@ INSERT INTO Customers (FirstName, LastName, Email, Phone, AddressID, UserID) VAL
 ('Customer8', 'Lastname8', 'email8@email.com', '555-8888', 8, 8),
 ('Customer9', 'Lastname9', 'email9@email.com', '555-9999', 9, 9),
 ('Customer10', 'Lastname10', 'email10@email.com', '555-0000', 10, 10);
+GO
 
--- Insert data into Products table
+-- Insert data into Products
+-- Please make sure that the CategoryID and the image URLs match your actual data
 INSERT INTO Products (Name, Description, Price, StockQuantity, CategoryID, Img) VALUES
 ('Laptop', 'High performance laptop', 4999.99, 100, 1, 'https://media.wired.com/photos/64daad6b4a854832b16fd3bc/master/pass/How-to-Choose-a-Laptop-August-2023-Gear.jpg'),
 ('IPhone', 'The newest product from Apple', 2999.99, 100, 1, 'https://images.fyndiq.se/images/f_auto/t_600x600/prod/0c572c0b0b2a43b6/ebe836a6e68e/iphone-12-pro-max-cover-bla'),
@@ -86,8 +95,7 @@ INSERT INTO Products (Name, Description, Price, StockQuantity, CategoryID, Img) 
 ('Sliced Bread', 'Fresh bread right from the bakery', 13.99, 1000, 9, 'https://www.tornado-studios.com/sites/default/files/styles/slider_full/public/products/2028/gallery/sliced_bread_in_bag_thumbnail_square_0000.jpg?itok=v_xPdFUU'),
 ('Cat Food', 'Nutritional food for cats', 49.99, 200, 10, 'https://headsupfortails.com/cdn/shop/files/WhiskasOceanFishAdultDryCatFood_f5bbf1f9-31dd-433e-99bd-00582d979f60.jpg?v=1683109071'),
 ('Dog Food', 'Nutritional food for dogs', 49.99, 200, 10, 'https://pedigreeclub.in/cdn/shop/products/B00LHS884Y.MAIN.jpg?v=1673452671')
-
-
+GO
 
 -- Insert data into OrderTables
 INSERT INTO OrderTables (OrderDate, TotalAmount, CustomerID, DeliveryAddressID) VALUES
@@ -101,8 +109,7 @@ INSERT INTO OrderTables (OrderDate, TotalAmount, CustomerID, DeliveryAddressID) 
 (GETDATE(), 200.00, 8, 8),
 (GETDATE(), 300.00, 9, 9),
 (GETDATE(), 400.00, 10, 10);
-
-
+GO
 
 -- Insert data into OrderItems
 INSERT INTO OrderItems (Quantity, Price, OrderID, ProductID) VALUES
@@ -116,7 +123,7 @@ INSERT INTO OrderItems (Quantity, Price, OrderID, ProductID) VALUES
 (3, 12.99, 8, 8),
 (4, 22.99, 9, 9),
 (1, 18.99, 10, 10);
-
+GO
 
 -- Insert data into Payments
 INSERT INTO Payments (PaymentMethod, PaymentDate, Amount, OrderID) VALUES
@@ -130,7 +137,7 @@ INSERT INTO Payments (PaymentMethod, PaymentDate, Amount, OrderID) VALUES
 ('Debit Card', GETDATE(), 200.00, 8),
 ('Cash', GETDATE(), 300.00, 9),
 ('Credit Card', GETDATE(), 400.00, 10);
-
+GO
 
 -- Insert data into ProductAudits
 INSERT INTO ProductAudits (OldPrice, NewPrice, ChangeDate, ProductID) VALUES
@@ -144,7 +151,7 @@ INSERT INTO ProductAudits (OldPrice, NewPrice, ChangeDate, ProductID) VALUES
 (10.99, 12.99, GETDATE(), 8),
 (35.99, 39.99, GETDATE(), 9),
 (16.99, 19.99, GETDATE(), 10);
-
+GO
 
 -- Insert data into PaymentAudits
 INSERT INTO PaymentAudits (OrderID, Date, Amount, ActionType, ActionDate) VALUES
@@ -158,3 +165,4 @@ INSERT INTO PaymentAudits (OrderID, Date, Amount, ActionType, ActionDate) VALUES
 (8, GETDATE(), 99.99, 'Charge', GETDATE()),
 (9, GETDATE(), 3.99, 'Charge', GETDATE()),
 (10, GETDATE(), 500.00, 'Charge', GETDATE());
+GO
