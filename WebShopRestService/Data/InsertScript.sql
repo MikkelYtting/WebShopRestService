@@ -59,7 +59,6 @@ INSERT INTO Customers (FirstName, LastName, Email, Phone, AddressID, UserID) VAL
                                                                                  ('Customer9', 'Lastname9', 'email9@email.com', '555-9999', 9, 9),
                                                                                  ('Customer10', 'Lastname10', 'email10@email.com', '555-0000', 10, 10);
 
-GO
 
 -- Insert data into Products
 -- Please make sure that the CategoryID and the image URLs match your actual data
@@ -97,16 +96,16 @@ GO
 
 -- Insert data into OrderTables
 INSERT INTO OrderTables (OrderDate, TotalAmount, CustomerID, DeliveryAddressID) VALUES
-(NOW(), 1000.00, 1, 1),
-(NOW(), 50.00, 2, 2),
-(NOW(), 23.99, 3, 3),
-(NOW(), 450.00, 4, 4),
-(NOW(), 29.99, 5, 5),
-(NOW(), 75.50, 6, 6),
-(NOW(), 150.00, 7, 7),
-(NOW(), 200.00, 8, 8),
-(NOW(), 300.00, 9, 9),
-(NOW(), 400.00, 10, 10);
+    (NOW(), 1000.00, 1, 1),
+    (NOW(), 50.00, 2, 2),
+    (NOW(), 23.99, 3, 3),
+    (NOW(), 450.00, 4, 4),
+    (NOW(), 29.99, 5, 5),
+    (NOW(), 75.50, 6, 6),
+    (NOW(), 150.00, 7, 7),
+    (NOW(), 200.00, 8, 8),
+    (NOW(), 300.00, 9, 9),
+    (NOW(), 400.00, 10, 10);
 
 -- Insert data into OrderItems
 INSERT INTO OrderItems (Quantity, Price, OrderID, ProductID) VALUES
