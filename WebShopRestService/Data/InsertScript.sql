@@ -100,7 +100,7 @@ INSERT INTO OrderTables (OrderDate, TotalAmount, CustomerID, DeliveryAddressID) 
     (NOW(), 50.00, 2, 2),
     (NOW(), 23.99, 3, 3),
     (NOW(), 450.00, 4, 4),
-    (NOW(), 29.99, 5, 5),
+    (NOW(), 29.99, 5, 5), 
     (NOW(), 75.50, 6, 6),
     (NOW(), 150.00, 7, 7),
     (NOW(), 200.00, 8, 8),
