@@ -1,66 +1,64 @@
-﻿USE WebshopDatabase;
-GO
+﻿
+
+USE WebshopDatabase;
 
 -- Insert data into Roles
 INSERT INTO Roles (Name, AccessLevel) VALUES
-('Administrator', 1),
-('Customer', 2);
-GO
+                                          ('Administrator', 1),
+                                          ('Customer', 2);
 
 -- Insert data into Categories
 INSERT INTO Categories (Name, Description) VALUES
-('Electronics', 'Devices and gadgets'),
-('Books', 'Fiction and non-fiction literature'),
-('Clothing', 'Men and Women apparel'),
-('Home & Garden', 'Furniture and gardening'),
-('Sports', 'Sporting goods and outdoor activities'),
-('Toys & Games', 'Children''s toys and board games'),
-('Health & Beauty', 'Personal care products'),
-('Automotive', 'Car accessories and parts'),
-('Groceries', 'Food and beverages'),
-('Pet Supplies', 'Pet food and accessories');
-GO
+                                               ('Electronics', 'Devices and gadgets'),
+                                               ('Books', 'Fiction and non-fiction literature'),
+                                               ('Clothing', 'Men and Women apparel'),
+                                               ('Home & Garden', 'Furniture and gardening'),
+                                               ('Sports', 'Sporting goods and outdoor activities'),
+                                               ('Toys & Games', 'Children''s toys and board games'),
+                                               ('Health & Beauty', 'Personal care products'),
+                                               ('Automotive', 'Car accessories and parts'),
+                                               ('Groceries', 'Food and beverages'),
+                                               ('Pet Supplies', 'Pet food and accessories');
 
 -- Insert data into Addresses
 INSERT INTO Addresses (Street, City, PostalCode, Country) VALUES
-('123 Main St', 'Anytown', '12345', 'USA'),
-('456 Elm St', 'Othertown', '23456', 'USA'),
-('789 Oak St', 'Sometown', '34567', 'USA'),
-('101 Maple St', 'Yourtown', '45678', 'USA'),
-('202 Pine St', 'TheirTown', '56789', 'USA'),
-('303 Birch St', 'Newtown', '67890', 'USA'),
-('404 Cedar St', 'Oldtown', '78901', 'USA'),
-('505 Spruce St', 'Westtown', '89012', 'USA'),
-('606 Ash St', 'Easttown', '90123', 'USA'),
-('707 Willow St', 'Northtown', '01234', 'USA');
-GO
+                                                              ('123 Main St', 'Anytown', '12345', 'USA'),
+                                                              ('456 Elm St', 'Othertown', '23456', 'USA'),
+                                                              ('789 Oak St', 'Sometown', '34567', 'USA'),
+                                                              ('101 Maple St', 'Yourtown', '45678', 'USA'),
+                                                              ('202 Pine St', 'TheirTown', '56789', 'USA'),
+                                                              ('303 Birch St', 'Newtown', '67890', 'USA'),
+                                                              ('404 Cedar St', 'Oldtown', '78901', 'USA'),
+                                                              ('505 Spruce St', 'Westtown', '89012', 'USA'),
+                                                              ('606 Ash St', 'Easttown', '90123', 'USA'),
+                                                              ('707 Willow St', 'Northtown', '01234', 'USA');
 
 -- Insert data into UserCredentials
 INSERT INTO UserCredentials (Username, HashedPassword, RoleID) VALUES
-('johnsmith', 'HASHED_PASSWORD_HERE', 1),
-('emilyjones', 'HASHED_PASSWORD_HERE', 2),
-('michaelbrown', 'HASHED_PASSWORD_HERE', 2),
-('hannahwhite', 'HASHED_PASSWORD_HERE', 2),
-('daviddavis', 'HASHED_PASSWORD_HERE', 2),
-('user6', 'HASHED_PASSWORD_HERE', 2),
-('user7', 'HASHED_PASSWORD_HERE', 2),
-('user8', 'HASHED_PASSWORD_HERE', 2),
-('user9', 'HASHED_PASSWORD_HERE', 2),
-('user10', 'HASHED_PASSWORD_HERE', 2);
-GO
+                                                                   ('johnsmith', 'HASHED_PASSWORD_HERE', 1),
+                                                                   ('emilyjones', 'HASHED_PASSWORD_HERE', 2),
+                                                                   ('michaelbrown', 'HASHED_PASSWORD_HERE', 2),
+                                                                   ('hannahwhite', 'HASHED_PASSWORD_HERE', 2),
+                                                                   ('daviddavis', 'HASHED_PASSWORD_HERE', 2),
+                                                                   ('user6', 'HASHED_PASSWORD_HERE', 2),
+                                                                   ('user7', 'HASHED_PASSWORD_HERE', 2),
+                                                                   ('user8', 'HASHED_PASSWORD_HERE', 2),
+                                                                   ('user9', 'HASHED_PASSWORD_HERE', 2),
+                                                                   ('user10', 'HASHED_PASSWORD_HERE', 2);
 
 -- Insert data into Customers
 INSERT INTO Customers (FirstName, LastName, Email, Phone, AddressID, UserID) VALUES
-('John', 'Smith', 'john.smith@email.com', '555-1111', 1, 1),
-('Emily', 'Jones', 'emily.jones@email.com', '555-2222', 2, 2),
-('Michael', 'Brown', 'michael.brown@email.com', '555-3333', 3, 3),
-('Hannah', 'White', 'hannah.white@email.com', '555-4444', 4, 4),
-('David', 'Davis', 'david.davis@email.com', '555-5555', 5, 5),
-('Customer6', 'Lastname6', 'email6@email.com', '555-6666', 6, 6),
-('Customer7', 'Lastname7', 'email7@email.com', '555-7777', 7, 7),
-('Customer8', 'Lastname8', 'email8@email.com', '555-8888', 8, 8),
-('Customer9', 'Lastname9', 'email9@email.com', '555-9999', 9, 9),
-('Customer10', 'Lastname10', 'email10@email.com', '555-0000', 10, 10);
+                                                                                 ('John', 'Smith', 'john.smith@email.com', '555-1111', 1, 1),
+                                                                                 ('Emily', 'Jones', 'emily.jones@email.com', '555-2222', 2, 2),
+                                                                                 ('Michael', 'Brown', 'michael.brown@email.com', '555-3333', 3, 3),
+                                                                                 ('Hannah', 'White', 'hannah.white@email.com', '555-4444', 4, 4),
+                                                                                 ('David', 'Davis', 'david.davis@email.com', '555-5555', 5, 5),
+                                                                                 ('Customer6', 'Lastname6', 'email6@email.com', '555-6666', 6, 6),
+                                                                                 ('Customer7', 'Lastname7', 'email7@email.com', '555-7777', 7, 7),
+                                                                                 ('Customer8', 'Lastname8', 'email8@email.com', '555-8888', 8, 8),
+                                                                                 ('Customer9', 'Lastname9', 'email9@email.com', '555-9999', 9, 9),
+                                                                                 ('Customer10', 'Lastname10', 'email10@email.com', '555-0000', 10, 10);
+
 GO
 
 -- Insert data into Products
@@ -99,70 +97,65 @@ GO
 
 -- Insert data into OrderTables
 INSERT INTO OrderTables (OrderDate, TotalAmount, CustomerID, DeliveryAddressID) VALUES
-(GETDATE(), 1000.00, 1, 1),
-(GETDATE(), 50.00, 2, 2),
-(GETDATE(), 23.99, 3, 3),
-(GETDATE(), 450.00, 4, 4),
-(GETDATE(), 29.99, 5, 5),
-(GETDATE(), 75.50, 6, 6),
-(GETDATE(), 150.00, 7, 7),
-(GETDATE(), 200.00, 8, 8),
-(GETDATE(), 300.00, 9, 9),
-(GETDATE(), 400.00, 10, 10);
-GO
+(NOW(), 1000.00, 1, 1),
+(NOW(), 50.00, 2, 2),
+(NOW(), 23.99, 3, 3),
+(NOW(), 450.00, 4, 4),
+(NOW(), 29.99, 5, 5),
+(NOW(), 75.50, 6, 6),
+(NOW(), 150.00, 7, 7),
+(NOW(), 200.00, 8, 8),
+(NOW(), 300.00, 9, 9),
+(NOW(), 400.00, 10, 10);
 
 -- Insert data into OrderItems
 INSERT INTO OrderItems (Quantity, Price, OrderID, ProductID) VALUES
-(1, 999.99, 1, 1),
-(3, 19.99, 2, 2),
-(5, 9.99, 3, 3),
-(1, 499.99, 4, 4),
-(2, 29.99, 5, 5),
-(2, 15.99, 6, 6),
-(1, 45.99, 7, 7),
-(3, 12.99, 8, 8),
-(4, 22.99, 9, 9),
-(1, 18.99, 10, 10);
-GO
+                                                                 (1, 999.99, 1, 1),
+                                                                 (3, 19.99, 2, 2),
+                                                                 (5, 9.99, 3, 3),
+                                                                 (1, 499.99, 4, 4),
+                                                                 (2, 29.99, 5, 5),
+                                                                 (2, 15.99, 6, 6),
+                                                                 (1, 45.99, 7, 7),
+                                                                 (3, 12.99, 8, 8),
+                                                                 (4, 22.99, 9, 9),
+                                                                 (1, 18.99, 10, 10);
 
 -- Insert data into Payments
 INSERT INTO Payments (PaymentMethod, PaymentDate, Amount, OrderID) VALUES
-('Credit Card', GETDATE(), 1000.00, 1),
-('PayPal', GETDATE(), 50.00, 2),
-('Credit Card', GETDATE(), 23.99, 3),
-('Debit Card', GETDATE(), 450.00, 4),
-('Cash', GETDATE(), 29.99, 5),
-('Credit Card', GETDATE(), 75.50, 6),
-('PayPal', GETDATE(), 150.00, 7),
-('Debit Card', GETDATE(), 200.00, 8),
-('Cash', GETDATE(), 300.00, 9),
-('Credit Card', GETDATE(), 400.00, 10);
-GO
+                                                                       ('Credit Card', NOW(), 1000.00, 1),
+                                                                       ('PayPal', NOW(), 50.00, 2),
+                                                                       ('Credit Card', NOW(), 23.99, 3),
+                                                                       ('Debit Card', NOW(), 450.00, 4),
+                                                                       ('Cash', NOW(), 29.99, 5),
+                                                                       ('Credit Card', NOW(), 75.50, 6),
+                                                                       ('PayPal', NOW(), 150.00, 7),
+                                                                       ('Debit Card', NOW(), 200.00, 8),
+                                                                       ('Cash', NOW(), 300.00, 9),
+                                                                       ('Credit Card', NOW(), 400.00, 10);
 
 -- Insert data into ProductAudits
 INSERT INTO ProductAudits (OldPrice, NewPrice, ChangeDate, ProductID) VALUES
-(899.99, 999.99, GETDATE(), 1),
-(15.99, 19.99, GETDATE(), 2),
-(7.99, 9.99, GETDATE(), 3),
-(399.99, 499.99, GETDATE(), 4),
-(24.99, 29.99, GETDATE(), 5),
-(30.99, 34.99, GETDATE(), 6),
-(20.99, 24.99, GETDATE(), 7),
-(10.99, 12.99, GETDATE(), 8),
-(35.99, 39.99, GETDATE(), 9),
-(16.99, 19.99, GETDATE(), 10);
-GO
+                                                                          (899.99, 999.99, NOW(), 1),
+                                                                          (15.99, 19.99, NOW(), 2),
+                                                                          (7.99, 9.99, NOW(), 3),
+                                                                          (399.99, 499.99, NOW(), 4),
+                                                                          (24.99, 29.99, NOW(), 5),
+                                                                          (30.99, 34.99, NOW(), 6),
+                                                                          (20.99, 24.99, NOW(), 7),
+                                                                          (10.99, 12.99, NOW(), 8),
+                                                                          (35.99, 39.99, NOW(), 9),
+                                                                          (16.99, 19.99, NOW(), 10);
 
 -- Insert data into PaymentAudits
 INSERT INTO PaymentAudits (OrderID, Date, Amount, ActionType, ActionDate) VALUES
-(1, GETDATE(), 1000.00, 'Charge', GETDATE()),
-(2, GETDATE(), 50.00, 'Charge', GETDATE()),
-(3, GETDATE(), 23.99, 'Charge', GETDATE()),
-(4, GETDATE(), 450.00, 'Charge', GETDATE()),
-(5, GETDATE(), 29.99, 'Charge', GETDATE()),
-(6, GETDATE(), 89.99, 'Charge', GETDATE()),
-(7, GETDATE(), 15.99, 'Charge', GETDATE()),
-(8, GETDATE(), 99.99, 'Charge', GETDATE()),
-(9, GETDATE(), 3.99, 'Charge', GETDATE()),
-(10, GETDATE(), 500.00, 'Charge', GETDATE());
-GO
+                                                                              (1, NOW(), 1000.00, 'Charge', NOW()),
+                                                                              (2, NOW(), 50.00, 'Charge', NOW()),
+                                                                              (3, NOW(), 23.99, 'Charge', NOW()),
+                                                                              (4, NOW(), 450.00, 'Charge', NOW()),
+                                                                              (5, NOW(), 29.99, 'Charge', NOW()),
+                                                                              (6, NOW(), 89.99, 'Charge', NOW()),
+                                                                              (7, NOW(), 15.99, 'Charge', NOW()),
+                                                                              (8, NOW(), 99.99, 'Charge', NOW()),
+                                                                              (9, NOW(), 3.99, 'Charge', NOW()),
+                                                                              (10, NOW(), 500.00, 'Charge', NOW());
