@@ -10,7 +10,7 @@ jobs:
       sql-server:
         image: mcr.microsoft.com/mssql/server:2019-latest
         env:
-          SA_PASSWORD: ${{ secrets.SQL_SERVER_PASSWORD }}
+          SA_PASSWORD: "YourHardcodedPassword"  # Hardcoded password
           ACCEPT_EULA: "Y"
         ports:
           - 1433:1433
@@ -34,7 +34,7 @@ jobs:
     - name: Wait for SQL Server to become available
       run: |
         timeout=90 # Set a timeout of 90 seconds for SQL Server to start
-        until /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -Q "SELECT 1" > /dev/null 2>&1; do
+        until /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P "YourHardcodedPassword" -Q "SELECT 1" > /dev/null 2>&1; do
           echo "Waiting for SQL Server to start..."
           sleep 5
           timeout=$((timeout-5))
@@ -48,16 +48,16 @@ jobs:
 
     - name: Execute Database Creation Script
       run: |
-        /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i WebShopRestService/Data/CreateScript.sql
+        /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P "YourHardcodedPassword" -i WebShopRestService/Data/CreateScript.sql
 
     - name: Execute Database Seeding Script
       run: |
-        /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i WebShopRestService/Data/InsertScript.sql
+        /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P "YourHardcodedPassword" -i WebShopRestService/Data/InsertScript.sql
 
     - name: Build project
       run: dotnet build --configuration Release WebShopRestService
 
     - name: Run integration tests
       env:
-        TEST_CONNECTION_STRING: "Server=localhost,1433;Database=WebshopDatabase;User ID=SA;Password=${{ secrets.SQL_SERVER_PASSWORD }};TrustServerCertificate=True;"
+        TEST_CONNECTION_STRING: "Server=localhost,1433;Database=WebshopDatabase;User ID=SA;Password=YourHardcodedPassword;TrustServerCertificate=True;"  # Hardcoded password
       run: dotnet test --verbosity normal WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj 
