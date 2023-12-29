@@ -4,13 +4,13 @@ on: [push]
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest  # Change to Windows runner
 
     services:
       sql-server:
-        image: mcr.microsoft.com/mssql/server:2017-latest  # Changed to MSSQL Server 2017
+        image: mcr.microsoft.com/mssql/server:2017-latest
         env:
-          SA_PASSWORD: ${{ secrets.SQL_SERVER_PASSWORD }}  # Using GitHub Secrets
+          SA_PASSWORD: ${{ secrets.SQL_SERVER_PASSWORD }}
           ACCEPT_EULA: "Y"
         ports:
           - 1433:1433
@@ -23,41 +23,43 @@ jobs:
       with:
         dotnet-version: '7.0'
 
+    # The SQL Server command-line tools installation steps are different for Windows
     - name: Install SQL Server command-line tools
       run: |
-        sudo apt-get update
-        sudo apt-get install -y mssql-tools unixodbc-dev
+        Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/?linkid=2142258" -OutFile "SqlCmdLnUtils.msi"
+        Start-Process msiexec.exe -ArgumentList '/i SqlCmdLnUtils.msi /quiet /norestart' -NoNewWindow -Wait
 
     - name: List SQL Scripts Directory
-      run: ls -la ./WebShopRestService/Data/
+      run: dir .\WebShopRestService\Data\
 
     - name: Wait for SQL Server to become available
       run: |
-        timeout=90
-        until /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -Q "SELECT 1" > /dev/null 2>&1; do
-          echo "Waiting for SQL Server to start..."
-          sleep 5
-          timeout=$((timeout-5))
-          if [ "$timeout" -le 0 ]; then
-            echo "SQL Server did not start in time. Fetching logs..."
-            docker logs sql-server
-            exit 1
-          fi
-        done
-        echo "SQL Server is up and running!"
+        $timeout = 90
+        $counter = 0
+        do {
+          Start-Sleep -Seconds 5
+          $counter += 5
+          $sqlcmd = sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -Q "SELECT 1"
+          if ($sqlcmd -ne $null) { break }
+          Write-Host "Waiting for SQL Server to start..."
+        } while ($counter -lt $timeout)
+        if ($counter -ge $timeout) {
+          throw "SQL Server did not start in time."
+        }
+        Write-Host "SQL Server is up and running!"
 
     - name: Execute Database Creation Script
       run: |
-        /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i WebShopRestService/Data/CreateScript.sql
+        sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i .\WebShopRestService\Data\CreateScript.sql
 
     - name: Execute Database Seeding Script
       run: |
-        /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i WebShopRestService/Data/InsertScript.sql
+        sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i .\WebShopRestService\Data\InsertScript.sql
 
     - name: Build project
-      run: dotnet build --configuration Release WebShopRestService
+      run: dotnet build --configuration Release .\WebShopRestService\
 
     - name: Run integration tests
       env:
         TEST_CONNECTION_STRING: "Server=localhost,1433;Database=WebshopDatabase;User ID=SA;Password=${{ secrets.SQL_SERVER_PASSWORD }};TrustServerCertificate=True;"
-      run: dotnet test --verbosity normal WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
+      run: dotnet test --verbosity normal .\WebShopRestService-IntegrationTest\WebShopRestService-IntegrationTest.csproj
