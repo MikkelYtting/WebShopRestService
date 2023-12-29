@@ -1,6 +1,6 @@
 name: .NET CI
 
-on:[push] 
+on: [push]
 
 jobs:
   build-and-test:
