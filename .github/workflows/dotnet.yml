@@ -14,55 +14,29 @@ jobs:
           MYSQL_DATABASE: WebshopDatabase
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root --password=${{ secrets.MYSQL_ROOT_PASSWORD }}" 
-          --health-interval=20s 
-          --health-timeout=10s 
-          --health-retries=10
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '7.0'
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 7.0.x
 
-    - name: Install MySQL client
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y mysql-client
+      - name: Restore dependencies
+        run: dotnet restore WebShopRestService/WebShopRestService.csproj
 
-    - name: List SQL Scripts Directory
-      run: ls -la ./WebShopRestService/Data/
+      - name: Apply migration.sql to MySQL
+        run: |
+          sudo apt-get install -y mysql-client
+          mysql -h127.0.0.1 -P3306 -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }} WebshopDatabase < WebShopRestService/Data/CreateScript.sql
+          mysql -h127.0.0.1 -P3306 -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }} WebshopDatabase < WebShopRestService/Data/InsertScript.sql
 
-    - name: Wait for MySQL to become available
-      run: |
-        timeout=180 # Set a timeout of 180 seconds for MySQL to start
-        until mysqladmin ping -h localhost -u root --password=${{ secrets.MYSQL_ROOT_PASSWORD }} --silent; do
-          echo "Waiting for MySQL to start..."
-          sleep 10
-          timeout=$((timeout-10))
-          if [ "$timeout" -le 0 ]; then
-            echo "MySQL did not start in time. Fetching logs..."
-            docker logs ${{ job.services.mysql.id }}
-            exit 1
-          fi
-        done
-        echo "MySQL is up and running!"
+      - name: Build
+        run: dotnet build --no-restore WebShopRestService/WebShopRestService.csproj
 
-    - name: Execute Database Creation Script
-      run: |
-        mysql -h localhost -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} WebshopDatabase < ./WebShopRestService/Data/CreateScript.sql
-
-    - name: Execute Database Seeding Script
-      run: |
-        mysql -h localhost -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} WebshopDatabase < ./WebShopRestService/Data/InsertScript.sql
-
-    - name: Build project
-      run: dotnet build --configuration Release ./WebShopRestService
-
-    - name: Run integration tests
-      env:
-        TEST_CONNECTION_STRING: "Server=localhost;Database=WebshopDatabase;User ID=root;Password=${{ secrets.MYSQL_ROOT_PASSWORD }};"
-      run: dotnet test --verbosity normal ./WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
+      - name: Test
+        env:
+          TEST_CONNECTION_STRING: "Server=localhost;Database=WebshopDatabase;User ID=root;Password=${{ secrets.MYSQL_ROOT_PASSWORD }};"
+        run: dotnet test --no-build --verbosity normal WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
