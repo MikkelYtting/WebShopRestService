@@ -22,16 +22,15 @@ public class AddressesManagerTests
     [TestInitialize]
     public void Initialize()
     {
-        // Use an environment variable to get the test connection string
+        var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING");
+
         var options = new DbContextOptionsBuilder<MyDbContext>()
-                .UseSqlServer("Server=localhost,1433;Database=WebshopDatabase;User ID=SA;Password=${{ secrets.SQL_SERVER_PASSWORD }};Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False")
-                .Options;
+            .UseSqlServer(connectionString)
+            .Options;
 
         _context = new MyDbContext(options);
         _repository = new AddressesRepository(_context);
         _manager = new AddressesManager(_repository);
-
-        // Begin a transaction for each test for easy rollback
         _transaction = _context.Database.BeginTransaction();
     }
 
