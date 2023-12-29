@@ -1,5 +1,8 @@
-﻿CREATE DATABASE WebshopDatabase
-USE WebshopDatabase
+﻿CREATE DATABASE WebshopDatabase;
+GO
+
+USE WebshopDatabase;
+GO
 -- Categories Table
 CREATE TABLE Categories (
     CategoryID INT PRIMARY KEY IDENTITY(1,1),
