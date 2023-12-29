@@ -25,8 +25,9 @@ public class AddressesManagerTests
         var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING");
 
         var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseSqlServer(connectionString)
+            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
             .Options;
+
 
         _context = new MyDbContext(options);
         _repository = new AddressesRepository(_context);
