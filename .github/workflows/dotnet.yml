@@ -7,13 +7,14 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      sql-server:
-        image: mcr.microsoft.com/mssql/server:2019-latest
+      mysql:
+        image: mysql:5.7
         env:
-          SA_PASSWORD: ${{ secrets.SQL_SERVER_PASSWORD }}
-          ACCEPT_EULA: "Y"
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: WebshopDatabase
         ports:
-          - 1433:1433
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
     - uses: actions/checkout@v2
@@ -23,41 +24,40 @@ jobs:
       with:
         dotnet-version: '7.0'
 
-    - name: Install SQL Server command-line tools
+    - name: Install MySQL client
       run: |
         sudo apt-get update
-        sudo apt-get install -y mssql-tools unixodbc-dev
+        sudo apt-get install -y mysql-client
 
     - name: List SQL Scripts Directory
       run: ls -la ./WebShopRestService/Data/
 
-    - name: Wait for SQL Server to become available
+    - name: Wait for MySQL to become available
       run: |
-        timeout=90 # Set a timeout of 90 seconds for SQL Server to start
-        until /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -Q "SELECT 1" > /dev/null 2>&1; do
-          echo "Waiting for SQL Server to start..."
+        timeout=30 # Set a timeout of 90 seconds for MySQL to start
+        until mysqladmin ping -h localhost --silent; do
+          echo "Waiting for MySQL to start..."
           sleep 5
           timeout=$((timeout-5))
           if [ "$timeout" -le 0 ]; then
-            echo "SQL Server did not start in time. Fetching logs..."
-            docker logs sql-server
+            echo "MySQL did not start in time. Exiting..."
             exit 1
           fi
         done
-        echo "SQL Server is up and running!"
+        echo "MySQL is up and running!"
 
     - name: Execute Database Creation Script
       run: |
-        /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i ./WebShopRestService/Data/CreateScript.sql
+        mysql -h localhost -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} WebshopDatabase < ./WebShopRestService/Data/CreateScript.sql
 
     - name: Execute Database Seeding Script
       run: |
-        /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i ./WebShopRestService/Data/InsertScript.sql
+        mysql -h localhost -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} WebshopDatabase < ./WebShopRestService/Data/InsertScript.sql
 
     - name: Build project
       run: dotnet build --configuration Release ./WebShopRestService
 
     - name: Run integration tests
       env:
-        TEST_CONNECTION_STRING: "Server=localhost,1433;Database=WebshopDatabase;User ID=SA;Password=${{ secrets.SQL_SERVER_PASSWORD }};TrustServerCertificate=True;"
-      run: dotnet test --verbosity normal ./WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj 
+        TEST_CONNECTION_STRING: "Server=localhost;Database=WebshopDatabase;User ID=root;Password=${{ secrets.MYSQL_ROOT_PASSWORD }};"
+      run: dotnet test --verbosity normal ./WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
