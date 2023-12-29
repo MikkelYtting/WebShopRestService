@@ -32,6 +32,8 @@ public class CustomerTests
     [DataRow("Bob")]
     [DataRow("A")] // Minimum valid length
     [DataRow("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")] // 50 'a's, maximum valid length
+    [DataRow("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")] // 49 'b's Just Below Maximum
+    [DataRow("bbbbbbbbbbbbbbbbbbbbbbb")] // 25 'b's middle of range
     public void Customer_WithValidFirstName_ShouldPassValidation(string firstName)
     {
         var customer = CreateCustomer(firstName, "ValidLastName", "email@example.com", "1234567890");
@@ -90,8 +92,9 @@ public class CustomerTests
     [TestMethod]
     [DataRow("email@example.com")]
     [DataRow("firstname.lastname@example.co.uk")]
-    [DataRow("a@a.a")] // Minimum valid length
-    
+    [DataRow("user@sub.example.com")] // Contains Dot in Domain
+    [DataRow("a@b.c")] // Short but valid email
+
     public void Customer_WithValidEmail_ShouldPassValidation(string email)
     {
         var customer = CreateCustomer("ValidFirstName", "ValidLastName", email, "1234567890");
@@ -121,8 +124,10 @@ public class CustomerTests
     }
     // positive test cases for phone numbers
     [TestMethod]
-    [DataRow("1234567890")]
-    [DataRow("+1-234-567-8901")]
+    [DataRow("123-456-7890")] // Valid Phone Number
+    [DataRow("1234567890")] // Just Numbers
+    [DataRow("+1-234-567-8900")] // Contains Country Code
+    [DataRow("12345678901234567890")] // 20 characters Maximum Length
     public void Customer_WithValidPhone_ShouldPassValidation(string phone)
     {
         var customer = CreateCustomer("ValidFirstName", "ValidLastName", "email@example.com", phone);
@@ -132,8 +137,10 @@ public class CustomerTests
     }
     // negative test cases for phone numbre
     [TestMethod]
-    [DataRow("")]
+    [DataRow("")] // Empty String
     [DataRow(" ")]
+    [DataRow("123-ABCD-EFGH")] // Invalid Format
+    [DataRow("123456789012345678901")] // 21 characters Just Over Maximum
     //[DataRow("123")]
     [DataRow(null)]
     public void Customer_WithInvalidPhone_ShouldFailValidation(string phone)

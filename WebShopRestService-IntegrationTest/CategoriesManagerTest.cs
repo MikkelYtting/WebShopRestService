@@ -8,6 +8,7 @@ using WebShopRestService.Interfaces;
 using WebShopRestService.Managers;
 using WebShopRestService.Models;
 using WebShopRestService.Repositories; // Assuming your repository classes are in this namespace
+using System;
 
 [TestClass]
 public class CategoriesManagerTest
@@ -18,23 +19,19 @@ public class CategoriesManagerTest
     [ClassInitialize]
     public static void ClassInitialize(TestContext testContext)
     {
-        // Assuming we have a method to get the test connection string
-        // var connectionString = GetTestConnectionString();
+        // Use an environment variable to get the test connection string
+        var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING")
+                               ?? "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"; // Fallback to local connection string
 
-        // Configure the DbContext with the connection string for the database
-
-         //
         var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseSqlServer("")
+            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
             .Options;
 
         _context = new MyDbContext(options);
         var categoryRepository = new CategoriesRepository(_context);
         _manager = new CategoriesManager(categoryRepository);
 
-        // Seed the database with a known state if necessary, for instance:
-        // _context.Categories.Add(new Category { Name = "TestCategory", Description = "TestDescription" });
-        // await _context.SaveChangesAsync();
+        // Seed the database with a known state if necessary
     }
 
     [ClassCleanup]

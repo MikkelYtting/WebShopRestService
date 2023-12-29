@@ -27,7 +27,7 @@ public class OrderItemTests
     // positive test cases for quantity
     [TestMethod]
     [DataRow(1)] // Minimum valid
-    [DataRow(10)]
+    [DataRow(10)] // Middle range
     [DataRow(int.MaxValue)] // Maximum valid
     public void OrderItem_WithValidQuantity_ShouldPassValidation(int quantity)
     {
@@ -51,8 +51,8 @@ public class OrderItemTests
 
     // positive test cases for price
     [TestMethod]
-    [DataRow(0.01)] // Using double, will convert to decimal in method
-    [DataRow(1000.00)]
+    [DataRow(0.01)] // Minimum valid
+    [DataRow(500000.00)] // Middle range
     [DataRow(1000000.00)] // Maximum valid
     public void OrderItem_WithValidPrice_ShouldPassValidation(double price)
     {
@@ -64,8 +64,8 @@ public class OrderItemTests
 
     // negative test cases for price
     [TestMethod]
-    [DataRow(0.00)] // Using double, will convert to decimal in method
-    [DataRow(-1.00)] // Negative value
+    [DataRow(0.00)] // Below minimum
+    [DataRow(-0.01)] // Negative value
     [DataRow(1000000.01)] // Above maximum
     public void OrderItem_WithInvalidPrice_ShouldFailValidation(double price)
     {
@@ -75,11 +75,11 @@ public class OrderItemTests
         Assert.IsTrue(validationResults.Count > 0);
     }
 
-
+    // positive test cases for OrderId
     [TestMethod]
-    [DataRow(1)] // Minimum valid (assuming IDs start from 1)
-    [DataRow(100)]
-    [DataRow(int.MaxValue)] // Maximum valid integer
+    [DataRow(1)] // Minimum valid
+    [DataRow(100)] // Middle range
+    [DataRow(int.MaxValue)] // Maximum valid
     public void OrderItem_WithValidOrderId_ShouldPassValidation(int orderId)
     {
         var orderItem = CreateOrderItem(1, 50.00m, orderId, 1);
@@ -90,7 +90,7 @@ public class OrderItemTests
 
     // negative test cases for OrderId
     [TestMethod]
-    [DataRow(0)] // Zero, which might be invalid in your system
+    [DataRow(0)] // Zero
     [DataRow(-1)] // Negative value
     public void OrderItem_WithInvalidOrderId_ShouldFailValidation(int orderId)
     {
@@ -102,9 +102,9 @@ public class OrderItemTests
 
     // positive test cases for ProductId
     [TestMethod]
-    [DataRow(1)] // Minimum valid (assuming IDs start from 1)
-    [DataRow(100)]
-    [DataRow(int.MaxValue)] // Maximum valid integer
+    [DataRow(1)] // Minimum valid
+    [DataRow(100)] // Middle range
+    [DataRow(int.MaxValue)] // Maximum valid
     public void OrderItem_WithValidProductId_ShouldPassValidation(int productId)
     {
         var orderItem = CreateOrderItem(1, 50.00m, 1, productId);
@@ -115,7 +115,7 @@ public class OrderItemTests
 
     // negative test cases for ProductId
     [TestMethod]
-    [DataRow(0)] // Zero, which might be invalid in your system
+    [DataRow(0)] // Zero
     [DataRow(-1)] // Negative value
     public void OrderItem_WithInvalidProductId_ShouldFailValidation(int productId)
     {
@@ -124,12 +124,4 @@ public class OrderItemTests
         Assert.IsFalse(result);
         Assert.IsTrue(validationResults.Count > 0);
     }
-
-
-
-
-    // Similar test cases can be created for OrderId and ProductId
-    // Ensure to test for both positive and negative scenarios
-    // Note: Since OrderId and ProductId are foreign keys, you might need to set up your testing environment 
-    // to handle database-related validations if any.
 }

@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 using WebShopRestService.Data;
 using WebShopRestService.Interfaces;
 using WebShopRestService.Managers;
@@ -19,17 +20,12 @@ public class OrderItemsManagerTest
     [ClassInitialize]
     public static void ClassInitialize(TestContext testContext)
     {
-        // Assuming we have a method to get the test connection string
-        // var connectionString = GetTestConnectionString();
+        // Use an environment variable to get the test connection string
+        var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING")
+                               ?? "YourLocalConnectionString"; // Fallback to local connection string if env var is not set
 
-        // Configure the DbContext with the connection string for the database
-        // Azure database
-        // var options = new DbContextOptionsBuilder<MyDbContext>()
-        //  .UseSqlServer("Server=tcp:mikkelyttingserver.database.windows.net,1433;Initial Catalog=DatabaseForUdviklere-Webshop;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;")
-        // .Options;
-        // Local database
         var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False")
+            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
             .Options;
 
         _context = new MyDbContext(options);
@@ -54,7 +50,7 @@ public class OrderItemsManagerTest
         var newOrderItem = new OrderItem
         {
             // Populate order item details
-            ProductId = 1, Quantity = 10, Price = 20.0M
+            ProductId = 11, Quantity = 10, Price = 20.0M
         };
 
         // Act
