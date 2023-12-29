@@ -5,39 +5,33 @@ using WebShopRestService.Data;
 using WebShopRestService.Managers;
 using WebShopRestService.Models;
 using WebShopRestService.Repositories;
+using System;
 
 [TestClass]
 public class AddressesManagerTests
 {
     private MyDbContext _context;
     private AddressesManager _manager;
-    private AddressesRepository _repository; // Repository instans
+    private AddressesRepository _repository; // Repository instance
     private IDbContextTransaction _transaction;
 
     /// <summary>
-    /// Initialiseringsmetode der køres før hver test.
-    /// Opretter og konfigurerer de nødvendige afhængigheder.
+    /// Initialization method that runs before each test.
+    /// Creates and configures the necessary dependencies.
     /// </summary>
     [TestInitialize]
     public void Initialize()
     {
-        // Antager, at vi har en metode til at hente test conntectionstring
-        // var connectionString = GetTestConnectionString();
-
-        // Lokal database
+        // Use an environment variable to get the test connection string
         var options = new DbContextOptionsBuilder<MyDbContext>()
-
-            .UseSqlServer("Server=localhost,1433;Database=WebshopDatabase;User ID=SA;Password=${{ secrets.SQL_SERVER_PASSWORD }};Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False")
-
-            .Options;
+                .UseSqlServer("Server=localhost,1433;Database=WebshopDatabase;User ID=SA;Password=${{ secrets.SQL_SERVER_PASSWORD }};Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False")
+                .Options;
 
         _context = new MyDbContext(options);
-
-        // Opret repository og overfør det til manageren
         _repository = new AddressesRepository(_context);
         _manager = new AddressesManager(_repository);
 
-        // Begynd en transaktion for hver test for nem tilbagerulning
+        // Begin a transaction for each test for easy rollback
         _transaction = _context.Database.BeginTransaction();
     }
 

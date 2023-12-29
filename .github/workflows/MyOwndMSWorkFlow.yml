@@ -48,16 +48,16 @@ jobs:
 
     - name: Execute Database Creation Script
       run: |
-        /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i ./WebShopRestService/Data/CreateScript.sql
+        /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i WebShopRestService/Data/CreateScript.sql
 
     - name: Execute Database Seeding Script
       run: |
-        /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i ./WebShopRestService/Data/InsertScript.sql
+        /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U SA -P ${{ secrets.SQL_SERVER_PASSWORD }} -i WebShopRestService/Data/InsertScript.sql
 
     - name: Build project
-      run: dotnet build --configuration Release ./WebShopRestService
+      run: dotnet build --configuration Release WebShopRestService
 
     - name: Run integration tests
       env:
         TEST_CONNECTION_STRING: "Server=localhost,1433;Database=WebshopDatabase;User ID=SA;Password=${{ secrets.SQL_SERVER_PASSWORD }};TrustServerCertificate=True;"
-      run: dotnet test --verbosity normal ./WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj 
+      run: dotnet test --verbosity normal WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj 

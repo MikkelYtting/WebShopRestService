@@ -22,8 +22,12 @@ public class CustomersManagerTest
     [TestInitialize]
     public async Task InitializeAsync()
     {
+        // Use an environment variable to get the test connection string
+        var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING")
+                               ?? "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"; // Fallback to local connection string
+
         var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False")
+            .UseSqlServer(connectionString)
             .Options;
 
         _context = new MyDbContext(options);
