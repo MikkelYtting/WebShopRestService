@@ -111,3 +111,7 @@ a
 1EksternAPIIntegrationAndUnitTest/appsettings.json,9/c/9c1b1ed8d1b084800158c18c54a4aa4d54e286dc
 `
 0EksternAPIIntegrationAndUnitTest/GlobalUsings.cs,e/0/e0fbd694ff244b3c010a278e2aa389c3e2cd4a0f
+X
+(WebShopRestService/Data/CreateScript.sql,1/f/1fef5b4b404f5f817b034263d0b56d2bf5395e53
+X
+(WebShopRestService/Data/InsertScript.sql,d/6/d6d3d1c87320f037d012ad71be4a811170fae384

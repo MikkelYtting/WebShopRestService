@@ -27,7 +27,7 @@ public class AddressesManagerTests
         // Lokal database
         var options = new DbContextOptionsBuilder<MyDbContext>()
 
-            .UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False")
+            .UseSqlServer("Server=localhost,1433;Database=WebshopDatabase;User ID=SA;Password=${{ secrets.SQL_SERVER_PASSWORD }};Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False")
 
             .Options;
 
