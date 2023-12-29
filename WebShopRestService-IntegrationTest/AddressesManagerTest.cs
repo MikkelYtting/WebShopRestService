@@ -22,9 +22,7 @@ public class AddressesManagerTests
     [TestInitialize]
     public void Initialize()
     {
-        // Use an environment variable to get the test connection string
-        var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING")
-                               ?? "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"; // Fallback to local connection string
+        var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING");
 
         var options = new DbContextOptionsBuilder<MyDbContext>()
             .UseSqlServer(connectionString)
@@ -33,8 +31,6 @@ public class AddressesManagerTests
         _context = new MyDbContext(options);
         _repository = new AddressesRepository(_context);
         _manager = new AddressesManager(_repository);
-
-        // Begin a transaction for each test for easy rollback
         _transaction = _context.Database.BeginTransaction();
     }
 
