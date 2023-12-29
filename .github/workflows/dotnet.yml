@@ -38,8 +38,7 @@ jobs:
         run: dotnet build --no-restore WebShopRestService/WebShopRestService.csproj
 
       - name: Test
-      env:
-        TEST_CONNECTION_STRING: "Server=localhost;Database=WebshopDatabase;User ID=root;Password=${{ secrets.MYSQL_ROOT_PASSWORD }};"
-      run: dotnet test --verbosity normal WebShopRestService/WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
-          build --verbosity normal WebShopRestService/WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
+        env:
+          TEST_CONNECTION_STRING: "Server=localhost;Database=WebshopDatabase;User ID=root;Password=${{ secrets.MYSQL_ROOT_PASSWORD }};"
+        run: dotnet test --verbosity normal WebShopRestService/WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
 
