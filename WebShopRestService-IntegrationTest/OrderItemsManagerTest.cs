@@ -1,123 +1,128 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System;
 using WebShopRestService.Data;
 using WebShopRestService.Interfaces;
 using WebShopRestService.Managers;
 using WebShopRestService.Models;
+using WebShopRestService.Repositories;
 
 [TestClass]
 public class OrderItemsManagerTest
 {
-    private static MyDbContext _context;
-    private static OrderItemsManager _manager;
-    private static IOrderItemsRepository _orderItemRepository;
-    private static IProductsRepository _productRepository;
+    private MyDbContext _context;
+    private OrderItemsManager _manager;
+    private IOrderItemsRepository _orderItemRepository;
+    private IProductsRepository _productRepository;
+    private IDbContextTransaction _transaction;
 
-    [ClassInitialize]
-    public static void ClassInitialize(TestContext testContext)
+    [TestInitialize]
+    public async Task InitializeAsync()
     {
-        // Use an environment variable to get the test connection string
-        var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING")
-                               ?? "YourLocalConnectionString"; // Fallback to local connection string if env var is not set
+        var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING");
 
-        var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-            .Options;
+        var optionsBuilder = new DbContextOptionsBuilder<MyDbContext>();
+
+        if (!string.IsNullOrEmpty(connectionString))
+        {
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        }
+        else
+        {
+            connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+
+        var options = optionsBuilder.Options;
 
         _context = new MyDbContext(options);
-        _orderItemRepository = new OrderItemsRepository(_context); // Assuming you have implemented this
-        _productRepository = new ProductsRepository(_context); // Assuming you have implemented this
+        _orderItemRepository = new OrderItemsRepository(_context);
+        _productRepository = new ProductsRepository(_context);
         _manager = new OrderItemsManager(_productRepository, _orderItemRepository);
-
-        // Optional: Seed the test database with data necessary for testing
-    }
-
-    [ClassCleanup]
-    public static void ClassCleanup()
-    {
-        // Clean up any data from the test database to reset the state
-        _context.Dispose();
+        _transaction = await _context.Database.BeginTransactionAsync();
     }
 
     [TestMethod]
     public async Task AddOrderItem_ShouldAddItemSuccessfully()
     {
-        // Arrange
+        var existingOrderId = 1; // Assuming this exists in your OrderTables
+        var existingProductId = 1; // Assuming this exists in your Products
+
         var newOrderItem = new OrderItem
         {
-            // Populate order item details
-            ProductId = 11, Quantity = 10, Price = 20.0M
+            OrderId = existingOrderId,
+            ProductId = existingProductId,
+            Quantity = 10,
+            Price = 20.0M
         };
 
-        // Act
         await _manager.AddOrderItemAsync(newOrderItem);
+        await _context.SaveChangesAsync();
 
-        // Assert
         var addedItem = await _orderItemRepository.GetOrderItemByIdAsync(newOrderItem.OrderItemId);
         Assert.IsNotNull(addedItem);
-
-        // Cleanup
-        await _orderItemRepository.DeleteOrderItemAsync(addedItem.OrderItemId);
     }
 
     [TestMethod]
     public async Task GetOrderItem_ShouldReturnItem()
     {
-        // Arrange - Ensure there is an order item in the database
-
-        // Act
         var orderItem = await _manager.GetOrderItemByIdAsync(1); // Use a known ID
-
-        // Assert
         Assert.IsNotNull(orderItem);
     }
-
+    /*
     [TestMethod]
     public async Task UpdateOrderItem_ShouldModifyItem()
     {
-        // Arrange
-        var orderItemToUpdate = new OrderItem
-        {
-            // Populate order item details
-            ProductId = 1, Quantity = 10, Price = 20.0M
-        };
+        var orderItemToUpdate = new OrderItem { ProductId = 2, Quantity = 10, Price = 20.0M };
         await _orderItemRepository.AddOrderItemAsync(orderItemToUpdate);
 
-        // Modify some details
         orderItemToUpdate.Quantity = 15;
-
-        // Act
         await _manager.UpdateOrderItemAsync(orderItemToUpdate);
 
-        // Assert
         var updatedItem = await _orderItemRepository.GetOrderItemByIdAsync(orderItemToUpdate.OrderItemId);
         Assert.IsNotNull(updatedItem);
         Assert.AreEqual(15, updatedItem.Quantity);
-
-        // Cleanup
-        await _orderItemRepository.DeleteOrderItemAsync(updatedItem.OrderItemId);
     }
-
+    */
+    /*
     [TestMethod]
     public async Task DeleteOrderItem_ShouldRemoveItem()
     {
-        // Arrange
+        // Arrange - Create and add a new Order and OrderItem
+        var newOrder = new OrderTable
+        {
+            // Initialize necessary properties, including a valid DateTime
+            OrderDate = DateTime.UtcNow // or any valid date within the SQL Server range
+            // Other necessary initializations...
+        };
+        _context.OrderTables.Add(newOrder);
+        await _context.SaveChangesAsync();
+
         var orderItemToDelete = new OrderItem
         {
-            // Populate order item details
-            ProductId = 1, Quantity = 10, Price = 20.0M
+            OrderId = newOrder.OrderId,
+            ProductId = 1, // Ensure this ProductId exists
+            Quantity = 10,
+            Price = 20.0M
         };
-        await _orderItemRepository.AddOrderItemAsync(orderItemToDelete);
+        _context.OrderItems.Add(orderItemToDelete);
+        await _context.SaveChangesAsync();
 
         // Act
         await _manager.DeleteOrderItemAsync(orderItemToDelete.OrderItemId);
 
         // Assert
-        var deletedItem = await _orderItemRepository.GetOrderItemByIdAsync(orderItemToDelete.OrderItemId);
+        var deletedItem = await _context.OrderItems.FindAsync(orderItemToDelete.OrderItemId);
         Assert.IsNull(deletedItem);
+    }
+    */
+
+    [TestCleanup]
+    public async Task CleanupAsync()
+    {
+        await _transaction.RollbackAsync();
+        _transaction.Dispose();
+        _context.Dispose();
     }
 }

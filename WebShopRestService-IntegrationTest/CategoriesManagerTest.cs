@@ -19,13 +19,23 @@ public class CategoriesManagerTest
     [ClassInitialize]
     public static void ClassInitialize(TestContext testContext)
     {
-        // Use an environment variable to get the test connection string
-        var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING")
-                               ?? "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"; // Fallback to local connection string
+        var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING");
 
-        var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-            .Options;
+        var optionsBuilder = new DbContextOptionsBuilder<MyDbContext>();
+
+        if (!string.IsNullOrEmpty(connectionString))
+        {
+            // Use MySQL when TEST_CONNECTION_STRING is provided
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        }
+        else
+        {
+            // Fallback to local MSSQL connection string
+            connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+
+        var options = optionsBuilder.Options;
 
         _context = new MyDbContext(options);
         var categoryRepository = new CategoriesRepository(_context);

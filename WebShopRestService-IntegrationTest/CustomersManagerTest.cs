@@ -22,13 +22,23 @@ public class CustomersManagerTest
     [TestInitialize]
     public async Task InitializeAsync()
     {
-        // Use an environment variable to get the test connection string
-        var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING")
-                               ?? "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"; // Fallback to local connection string
+        var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING");
 
-        var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-            .Options;
+        var optionsBuilder = new DbContextOptionsBuilder<MyDbContext>();
+
+        if (!string.IsNullOrEmpty(connectionString))
+        {
+            // Use MySQL when TEST_CONNECTION_STRING is provided
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        }
+        else
+        {
+            // Fallback to local MSSQL connection string
+            connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+
+        var options = optionsBuilder.Options;
 
         _context = new MyDbContext(options);
         _repository = new CustomersRepository(_context);
@@ -82,25 +92,50 @@ public class CustomersManagerTest
         await _context.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// Tests the functionality of updating an existing customer in the database.
+    /// The method follows these steps:
+    /// 1. Create and add a new test customer to the database.
+    /// 2. Retrieve (reload) the customer from the database to ensure it's being tracked by the DbContext.
+    /// 3. Modify the customer's details.
+    /// 4. Update the customer using the manager's update method.
+    /// 5. Retrieve the customer again to verify the update.
+    /// 6. Clean up by removing the test customer from the database.
+    /// This test ensures that the update functionality works as expected.
+    /// </summary>
     [TestMethod]
     public async Task Update_ShouldModifyExistingCustomer()
     {
         // Arrange
+        // Create a new test customer and add it to the database.
         var customerToUpdate = await CreateTestCustomerAsync("Eksisterende", "Bruger");
+        _context.Customers.Add(customerToUpdate);
+        await _context.SaveChangesAsync();
+
+        // Reload the customer from the database to ensure it's being tracked by the DbContext.
+        // This step is crucial for avoiding the DbUpdateConcurrencyException.
+        customerToUpdate = await _context.Customers.FindAsync(customerToUpdate.CustomerId);
+
+        // Modify the customer's first name.
         customerToUpdate.FirstName = "Opdateret Navn";
 
         // Act
+        // Update the customer in the database using the manager's method.
         await _manager.Update(customerToUpdate.CustomerId, customerToUpdate);
 
         // Assert
+        // Retrieve the updated customer and assert that the changes have been saved.
         var updatedCustomer = await _context.Customers.FindAsync(customerToUpdate.CustomerId);
         Assert.IsNotNull(updatedCustomer);
         Assert.AreEqual("Opdateret Navn", updatedCustomer.FirstName, "Kundens navn bør være opdateret.");
 
         // Cleanup
+        // Remove the test customer from the database.
         _context.Customers.Remove(updatedCustomer);
         await _context.SaveChangesAsync();
     }
+
+
 
     [TestMethod]
     public async Task Delete_ShouldRemoveCustomer()
