@@ -14,7 +14,7 @@ public class AddressesManagerTests
 {
     private MyDbContext _context;
     private AddressesManager _manager;
-    private AddressesRepository _repository; // Repository instanceg
+    private AddressesRepository _repository; // Repository instance
     private IDbContextTransaction _transaction;
 
     /// <summbjary>
