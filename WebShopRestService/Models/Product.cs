@@ -11,7 +11,7 @@ namespace WebShopRestService.Models
         public int ProductId { get; set; }
 
         [Required(ErrorMessage = "Product name is required.")]
-        [StringLength(101, ErrorMessage = "Product name cannot be longer than 100 characters.")]
+        [StringLength(100, ErrorMessage = "Product name cannot be longer than 100 characters.")]
         public string Name { get; set; }
 
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
