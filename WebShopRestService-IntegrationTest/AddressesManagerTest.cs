@@ -18,33 +18,44 @@ public class AddressesManagerTests
     private IDbContextTransaction _transaction;
 
     /// <summary>
-    /// Initialization method that runs before each test.
-    /// Creates and configures the necessary dependencies.
+    /// Initialiseringsmetode der kaldes før hver testmetode.
+    /// Denne metode opretter og konfigurerer de nødvendige afhængigheder for testklassen.
     /// </summary>
     [TestInitialize]
     public void Initialize()
     {
+        // Hent forbindelsesstrengen fra miljøvariablerne. Dette tillader forskellige konfigurationer
+        // for forskellige testmiljøer 
         var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING");
 
+        // Opbyg options for DbContext. Dette definerer, hvordan Entity Framework skal forbinde til databasen.
         var optionsBuilder = new DbContextOptionsBuilder<MyDbContext>();
 
         if (!string.IsNullOrEmpty(connectionString))
         {
-            // Use MySQL when TEST_CONNECTION_STRING is provided
+            // Anvend MySQL databaseforbindelse hvis TEST_CONNECTION_STRING er angivet.
+            // Dette er nyttigt til at skifte mellem forskellige databasetypen baseret på miljøet.
             optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         }
         else
         {
-            // Fallback to local MSSQL connection string
-            connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            // Hvis ingen forbindelsesstreng er angivet, fald tilbage til en lokal MSSQL forbindelsesstreng.
+            // Dette er nyttigt til lokal udvikling og testning.
+            connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
             optionsBuilder.UseSqlServer(connectionString);
         }
 
+        // Opret en instans af DbContext med de angivne options.
         var options = optionsBuilder.Options;
-
         _context = new MyDbContext(options);
+
+        // Opret de nødvendige repository og manager instanser. Disse bruges til at interagere
+        // med databasen i testene.
         _repository = new AddressesRepository(_context);
         _manager = new AddressesManager(_repository);
+
+        // Start en database transaktion. Dette sikrer, at ændringer foretaget i en test
+        // ikke påvirker andre tests, og gør det muligt at rulle ændringer tilbage efter hver test.
         _transaction = _context.Database.BeginTransaction();
     }
 
