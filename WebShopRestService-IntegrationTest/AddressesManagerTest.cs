@@ -17,7 +17,7 @@ public class AddressesManagerTests
     private AddressesRepository _repository; // Repository instance
     private IDbContextTransaction _transaction;
 
-    /// <summary>
+    /// <summbjary>
     /// Initialiseringsmetode der kaldes før hver testmetode.
     /// Denne metode opretter og konfigurerer de nødvendige afhængigheder for testklassen.
     /// </summary>
