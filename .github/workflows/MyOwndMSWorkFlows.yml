@@ -25,7 +25,12 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-        command: ["mysqld", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+          --entrypoint=""
+          -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+          -e MYSQL_DATABASE=WebshopDatabase
+          mysql:5.7 
+          --character-set-server=utf8mb4 
+          --collation-server=utf8mb4_unicode_ci
 
     steps:
       - uses: actions/checkout@v2
