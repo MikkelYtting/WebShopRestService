@@ -66,6 +66,7 @@ jobs:
           TEST_CONNECTION_STRING: "Server=localhost;Database=WebshopDatabase;User ID=root;Password=${{ secrets.MYSQL_ROOT_PASSWORD }};SslMode=none;"
         run: |
           dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
+          dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover WebShopRestService-UnitTest/WebShopRestService-UnitTest.csproj
 
       - name: End SonarCloud analysis
         env:
