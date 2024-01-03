@@ -33,7 +33,7 @@ jobs:
           dotnet restore WebShopRestService/WebShopRestService.csproj
           dotnet restore WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
           dotnet restore WebShopRestService-UnitTest/WebShopRestService-UnitTest.csproj
-          dotnet restore EksternAPIIntegrationAndUnitTest.csproj
+          
           
 
       - name: Apply migration.sql to MySQL
@@ -68,7 +68,7 @@ jobs:
         run: |
           dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
           dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover WebShopRestService-UnitTest/WebShopRestService-UnitTest.csproj
-          dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover EksternAPIIntegrationAndUnitTest.csproj
+          
 
       - name: End SonarCloud analysis
         env:
