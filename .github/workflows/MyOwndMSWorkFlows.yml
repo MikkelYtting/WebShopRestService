@@ -35,7 +35,9 @@ jobs:
           dotnet-version: 7.0.x
 
       - name: Restore dependencies
-        run: dotnet restore WebShopRestService/WebShopRestService.csproj
+        run: |
+          dotnet restore WebShopRestService/WebShopRestService.csproj
+          dotnet restore WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
 
       - name: Apply migration.sql to MySQL
         run: |
