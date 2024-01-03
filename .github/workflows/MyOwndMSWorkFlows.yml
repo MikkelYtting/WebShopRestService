@@ -20,7 +20,13 @@ jobs:
           MYSQL_DATABASE: WebshopDatabase
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+          --character-set-server=utf8mb4
+          --collation-server=utf8mb4_unicode_ci
 
     steps:
       - uses: actions/checkout@v2
@@ -38,7 +44,8 @@ jobs:
       - name: Begin SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet sonarscanner begin /k:"MikkelYtting_WebShopRestService" /o:"mikkelytting" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+        run: |
+          dotnet sonarscanner begin /k:"MikkelYtting_WebShopRestService" /o:"mikkelytting" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
 
       - name: Restore dependencies
         run: dotnet restore
@@ -48,10 +55,12 @@ jobs:
 
       - name: Run Tests with Coverage
         env:
-          TEST_CONNECTION_STRING: "Server=localhost;Database=WebshopDatabase;User ID=root;Password=${{ secrets.MYSQL_ROOT_PASSWORD }};"
-        run: dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          TEST_CONNECTION_STRING: "Server=localhost;Database=WebshopDatabase;User ID=root;Password=${{ secrets.MYSQL_ROOT_PASSWORD }};SslMode=None;"
+        run: |
+          dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 
       - name: End SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        run: |
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
