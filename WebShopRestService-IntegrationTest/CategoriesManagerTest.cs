@@ -31,7 +31,7 @@ public class CategoriesManagerTest
         else
         {
             // Fallback to local MSSQL connection string
-            connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopNew;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
             optionsBuilder.UseSqlServer(connectionString);
         }
 

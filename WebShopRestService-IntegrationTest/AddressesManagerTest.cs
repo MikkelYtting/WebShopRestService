@@ -41,7 +41,7 @@ public class AddressesManagerTests
         {
             // Hvis ingen forbindelsesstreng er angivet, fald tilbage til en lokal MSSQL forbindelsesstreng.
             // Dette er nyttigt til lokal udvikling og testning.
-            connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopNew;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
             optionsBuilder.UseSqlServer(connectionString);
         }
 
