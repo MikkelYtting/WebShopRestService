@@ -44,8 +44,11 @@ public class CategoryTests
     [DataRow("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")] // 50 'a's middle of range
     public void Category_WithValidName_ShouldPassValidation(string name)
     {
+        //Arrange
         var category = CreateCategory(name, "Valid Description");
+        //Act
         var result = TryValidateModel(category, out var validationResults);
+        //Assert
         Assert.IsTrue(result);
         Assert.AreEqual(0, validationResults.Count);
     }
@@ -62,8 +65,11 @@ public class CategoryTests
     [DataRow("   ")] // Whitespaces
     public void Category_WithInvalidName_ShouldFailValidation(string name)
     {
+        //Arrange
         var category = CreateCategory(name, "Valid Description");
+        //Act
         var result = TryValidateModel(category, out var validationResults);
+        //Assert
         Assert.IsFalse(result);
         Assert.IsTrue(validationResults.Count > 0);
     }
