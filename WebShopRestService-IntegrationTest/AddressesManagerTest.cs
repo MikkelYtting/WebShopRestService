@@ -34,7 +34,7 @@ public class AddressesManagerTests
         if (!string.IsNullOrEmpty(connectionString))
         {
             // Anvend MySQL databaseforbindelse hvis TEST_CONNECTION_STRING er angivet.
-            // Dette er nyttigt til at skifte mellem forskellige databasetypen baseret på miljøet.
+            // Dette er nyttigt til at skifte mellem forskellige databasetypen baseret på miljøet.hh
             optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         }
         else
