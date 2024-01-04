@@ -23,7 +23,8 @@ builder.Services.AddControllers();
 
 // Register the DbContext with dependency injection to access the database context throughout the application.
 builder.Services.AddDbContext<MyDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbConnection")));
+    options.UseMySql(builder.Configuration.GetConnectionString("MyDbConnection"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("MyDbConnection"))));
 
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
 

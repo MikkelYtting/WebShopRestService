@@ -38,7 +38,7 @@ public class AddressTests
     //[DataRow("A".PadRight(99, 'A'))] // Just Below Boundary
     //[DataRow("A".PadRight(50, 'A'))] // Middle of Range// Add more DataRow attributes for valid street names
     public void Address_WithValidStreet_ShouldPassValidation(string street)
-    {
+    { 
         var address = CreateAddress(street, "ValidCity", "12345", "ValidCountry");
         var result = TryValidateModel(address, out var validationResults);
         Assert.IsTrue(result);
@@ -63,6 +63,8 @@ public class AddressTests
         Assert.IsFalse(result);
         Assert.IsTrue(validationResults.Count > 0);
     }
+
+
     // Positive test cases for City
     [TestMethod]
     [DataRow("Anytown")]  // Normal case

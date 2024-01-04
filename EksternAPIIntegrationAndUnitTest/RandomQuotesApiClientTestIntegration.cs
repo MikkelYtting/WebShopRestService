@@ -11,11 +11,17 @@ namespace YourNamespace.Tests
         private RandomQuotesApiClient _apiClient;
         private string _apiKey;
 
-        [TestInitialize]public void Setup()
+        [TestInitialize]
+        public void Setup()
         {
             // Retrieve the API key from environment variables
-            _apiKey = Environment.GetEnvironmentVariable("API_KEY") 
-                      ?? throw new InvalidOperationException("API key not found in environment variables");
+            _apiKey = Environment.GetEnvironmentVariable("API_KEY");
+
+            // Use a default key if the environment variable is not set
+            if (string.IsNullOrEmpty(_apiKey))
+            {
+                _apiKey = "08f181344fmsh5c49b56b80636eep121031jsn470b5d9190df";
+            }
 
             _apiClient = new RandomQuotesApiClient(new HttpClient(), _apiKey);
         }
