@@ -1,0 +1,20 @@
+﻿/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/AddressTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/CatergoryTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/CustomerTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/GlobalUsings.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/MockTest/AddressManagerTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/MockTest/OrderTableManagerTests.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/Notes on TryValidateModel.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/OrderItemTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/OrderTableTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/PaymentAuditTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/PaymentTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/ProductAuditTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/ProductTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/RoleTest.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/UserCredentialTest.cs
+/Users/tobiaspoulsen/.nuget/packages/microsoft.net.test.sdk/17.8.0/build/netcoreapp3.1/Microsoft.NET.Test.Sdk.Program.cs
+/Users/tobiaspoulsen/RiderProjects/WebShopRestService2/WebShopRestService-UnitTest/coverage.opencover.xml
+/Users/tobiaspoulsen/.nuget/packages/mstest.testadapter/3.1.1/build/net6.0/Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+/Users/tobiaspoulsen/.nuget/packages/mstest.testadapter/3.1.1/build/net6.0/Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+/Users/tobiaspoulsen/.nuget/packages/mstest.testadapter/3.1.1/build/net6.0/Microsoft.TestPlatform.AdapterUtilities.dll

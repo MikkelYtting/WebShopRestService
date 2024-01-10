@@ -14,6 +14,7 @@ namespace WebShopRestService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //Følger ikke arkitekturen
     public class UserCredentialsController : ControllerBase
     {
         private readonly MyDbContext _context;
@@ -30,7 +31,7 @@ namespace WebShopRestService.Controllers
         public async Task<ActionResult<UserCredential>> Register(UserCredential userCredential)
         {
             // Hash the password before saving it to the database
-            userCredential.HashedPassword = _userCredentialsManager.HashPassword(userCredential.HashedPassword);
+            userCredential.HashedPassword = _userCredentialsManager.HashPassword(userCredential.HashedPassword); //Hashpass metode fra manager
 
             _context.UserCredentials.Add(userCredential);
             await _context.SaveChangesAsync();

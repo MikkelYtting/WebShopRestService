@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebShopRestService.Data;
 using WebShopRestService.DTO;
-using WebShopRestService.Interfaces;
+using WebShopRestService.Managers;
 using WebShopRestService.Models;
 
 namespace WebShopRestService.Controllers
@@ -17,14 +12,12 @@ namespace WebShopRestService.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private static IProductsRepository _manager;
-        private readonly MyDbContext _context;
+        private readonly ProductsManager _productsManager;
         private readonly IMapper _mapper;
 
-        public ProductsController(MyDbContext context, IMapper mapper)
+        public ProductsController(ProductsManager productsManager, IMapper mapper)
         {
-            _manager = new ProductsRepository(context);
-            _context = context;
+            _productsManager = productsManager;
             _mapper = mapper;
         }
 
@@ -32,35 +25,29 @@ namespace WebShopRestService.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts()
         {
-          if (_context.Products == null)
-          {
-              return NotFound();
-          }
-          var products = await _context.Products.ToListAsync();
-          var results = _mapper.Map<IList<ProductDTO>>(products);
-          return Ok(results);
+            var products = await _productsManager.GetAll();
+            if (products == null)
+            {
+                return NotFound();
+            }
+            var results = _mapper.Map<IList<ProductDTO>>(products);
+            return Ok(results);
         }
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductDTO>> GetProduct(int id)
         {
-          if (_context.Products == null)
-          {
-              return NotFound();
-          }
-          var product = await _context.Products.FindAsync(id);
-          var result = _mapper.Map<ProductDTO>(product);
+            var product = await _productsManager.Get(id);
             if (product == null)
             {
                 return NotFound();
             }
-
+            var result = _mapper.Map<ProductDTO>(product);
             return Ok(result);
         }
 
         // PUT: api/Products/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, [FromBody] ProductDTO updates)
         {
@@ -68,72 +55,43 @@ namespace WebShopRestService.Controllers
             {
                 return BadRequest();
             }
-            Product product = _context.Products.Find(id);
-            product.Name = updates.Name;
-            product.Description = updates.Description;
-            product.Img = updates.Img;
-            product.Price = updates.Price;
-            product.StockQuantity = updates.StockQuantity;
-            product.CategoryId = updates.CategoryId;
-            _context.Entry(product).State = EntityState.Modified;
 
-            try
+            var productToUpdate = await _productsManager.Get(id);
+            if (productToUpdate == null)
             {
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+
+            _mapper.Map(updates, productToUpdate);
+            await _productsManager.Update(id, productToUpdate);
 
             return NoContent();
         }
 
         // POST: api/Products
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct([FromBody]Product product)
+        public async Task<ActionResult<ProductDTO>> PostProduct([FromBody] ProductDTO productDto)
         {
-          if (_context.Products == null)
-          {
-              return Problem("Entity set 'MyDbContext.Products'  is null.");
-          }
-          _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+            var product = _mapper.Map<Product>(productDto);
+            var createdProduct = await _productsManager.Create(product);
+            var result = _mapper.Map<ProductDTO>(createdProduct);
 
-            return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
+            return CreatedAtAction(nameof(GetProduct), new { id = result.ProductId }, result);
         }
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            if (_context.Products == null)
-            {
-                return NotFound();
-            }
-            var product = await _context.Products.FindAsync(id);
+            var product = await _productsManager.Get(id);
             if (product == null)
             {
                 return NotFound();
             }
 
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            await _productsManager.Delete(id);
 
             return NoContent();
-        }
-
-        private bool ProductExists(int id)
-        {
-            return (_context.Products?.Any(e => e.ProductId == id)).GetValueOrDefault();
         }
     }
 }

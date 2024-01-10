@@ -8,6 +8,7 @@ using WebShopRestService.Interfaces;
 using WebShopRestService.Managers;
 using WebShopRestService.Models;
 using WebShopRestService.Repositories; // Assuming your repository classes are in this namespace
+using System;
 
 [TestClass]
 public class CategoriesManagerTest
@@ -18,26 +19,29 @@ public class CategoriesManagerTest
     [ClassInitialize]
     public static void ClassInitialize(TestContext testContext)
     {
-        // Assuming we have a method to get the test connection string
-        // var connectionString = GetTestConnectionString();
+        var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING");
 
-        // Configure the DbContext with the connection string for the database
-        // Azure database
-      //  var options = new DbContextOptionsBuilder<MyDbContext>()
-       //   .UseSqlServer("Server=tcp:mikkelyttingserver.database.windows.net,1433;Initial Catalog=DatabaseForUdviklere-Webshop;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;")
-       //  .Options;
-         //Local database
-        var options = new DbContextOptionsBuilder<MyDbContext>()
-            .UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase-lokal;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False")
-            .Options;
+        var optionsBuilder = new DbContextOptionsBuilder<MyDbContext>();
+
+        if (!string.IsNullOrEmpty(connectionString))
+        {
+            // Use MySQL when TEST_CONNECTION_STRING is provided
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        }
+        else
+        {
+            // Fallback to local MSSQL connection string
+            connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+
+        var options = optionsBuilder.Options;
 
         _context = new MyDbContext(options);
         var categoryRepository = new CategoriesRepository(_context);
         _manager = new CategoriesManager(categoryRepository);
 
-        // Seed the database with a known state if necessary, for instance:
-        // _context.Categories.Add(new Category { Name = "TestCategory", Description = "TestDescription" });
-        // await _context.SaveChangesAsync();
+        // Seed the database with a known state if necessary
     }
 
     [ClassCleanup]

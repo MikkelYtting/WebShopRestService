@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebShopRestService.Data;
+using WebShopRestService.Managers;
 using WebShopRestService.Models;
 
 namespace WebShopRestService.Controllers
@@ -14,33 +12,32 @@ namespace WebShopRestService.Controllers
     [ApiController]
     public class OrderTablesController : ControllerBase
     {
-        private readonly MyDbContext _context;
+        private readonly OrderTablesManager _orderTablesManager;
 
-        public OrderTablesController(MyDbContext context)
+        public OrderTablesController(OrderTablesManager orderTablesManager)
         {
-            _context = context;
+            _orderTablesManager = orderTablesManager;
         }
 
         // GET: api/OrderTables
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderTable>>> GetOrders()
         {
-          if (_context.OrderTables == null)
-          {
-              return NotFound();
-          }
-            return await _context.OrderTables.ToListAsync();
+            var orders = await _orderTablesManager.GetAllOrdersAsync();
+
+            if (orders == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(orders);
         }
 
         // GET: api/OrderTables/5
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderTable>> GetOrderTable(int id)
         {
-          if (_context.OrderTables == null)
-          {
-              return NotFound();
-          }
-            var orderTable = await _context.OrderTables.FindAsync(id);
+            var orderTable = await _orderTablesManager.GetOrderByIdAsync(id);
 
             if (orderTable == null)
             {
@@ -51,7 +48,6 @@ namespace WebShopRestService.Controllers
         }
 
         // PUT: api/OrderTables/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOrderTable(int id, OrderTable orderTable)
         {
@@ -60,15 +56,14 @@ namespace WebShopRestService.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(orderTable).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _orderTablesManager.UpdateOrderAsync(orderTable);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderTableExists(id))
+                var exists = await _orderTablesManager.GetOrderByIdAsync(id) != null;
+                if (!exists)
                 {
                     return NotFound();
                 }
@@ -82,43 +77,35 @@ namespace WebShopRestService.Controllers
         }
 
         // POST: api/OrderTables
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<OrderTable>> PostOrderTable(OrderTable orderTable)
         {
-          if (_context.OrderTables == null)
-          {
-              return Problem("Entity set 'MyDbContext.OrderTables'  is null.");
-          }
-            _context.OrderTables.Add(orderTable);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _orderTablesManager.ValidateAndAddOrderAsync(orderTable);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
-            return CreatedAtAction("GetOrderTable", new { id = orderTable.OrderId }, orderTable);
+            return CreatedAtAction(nameof(GetOrderTable), new { id = orderTable.OrderId }, orderTable);
         }
 
         // DELETE: api/OrderTables/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrderTable(int id)
         {
-            if (_context.OrderTables == null)
+            try
             {
-                return NotFound();
+                await _orderTablesManager.DeleteOrderAsync(id);
             }
-            var orderTable = await _context.OrderTables.FindAsync(id);
-            if (orderTable == null)
+            catch (InvalidOperationException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
-
-            _context.OrderTables.Remove(orderTable);
-            await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool OrderTableExists(int id)
-        {
-            return (_context.OrderTables?.Any(e => e.OrderId == id)).GetValueOrDefault();
         }
     }
 }

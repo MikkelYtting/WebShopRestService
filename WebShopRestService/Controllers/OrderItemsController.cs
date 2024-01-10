@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebShopRestService.Data;
+using WebShopRestService.Managers;
 using WebShopRestService.Models;
 
 namespace WebShopRestService.Controllers
@@ -14,33 +12,32 @@ namespace WebShopRestService.Controllers
     [ApiController]
     public class OrderItemsController : ControllerBase
     {
-        private readonly MyDbContext _context;
+        private readonly OrderItemsManager _orderItemsManager;
 
-        public OrderItemsController(MyDbContext context)
+        public OrderItemsController(OrderItemsManager orderItemsManager)
         {
-            _context = context;
+            _orderItemsManager = orderItemsManager;
         }
 
         // GET: api/OrderItems
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderItem>>> GetOrderItems()
         {
-          if (_context.OrderItems == null)
-          {
-              return NotFound();
-          }
-            return await _context.OrderItems.ToListAsync();
+            var orderItems = await _orderItemsManager.GetAllOrderItemsAsync();
+
+            if (orderItems == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(orderItems);
         }
 
         // GET: api/OrderItems/5
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderItem>> GetOrderItem(int id)
         {
-          if (_context.OrderItems == null)
-          {
-              return NotFound();
-          }
-            var orderItem = await _context.OrderItems.FindAsync(id);
+            var orderItem = await _orderItemsManager.GetOrderItemByIdAsync(id);
 
             if (orderItem == null)
             {
@@ -51,7 +48,6 @@ namespace WebShopRestService.Controllers
         }
 
         // PUT: api/OrderItems/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOrderItem(int id, OrderItem orderItem)
         {
@@ -60,15 +56,14 @@ namespace WebShopRestService.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(orderItem).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _orderItemsManager.UpdateOrderItemAsync(orderItem);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderItemExists(id))
+                var exists = await _orderItemsManager.GetOrderItemByIdAsync(id) != null;
+                if (!exists)
                 {
                     return NotFound();
                 }
@@ -82,43 +77,35 @@ namespace WebShopRestService.Controllers
         }
 
         // POST: api/OrderItems
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<OrderItem>> PostOrderItem(OrderItem orderItem)
         {
-          if (_context.OrderItems == null)
-          {
-              return Problem("Entity set 'MyDbContext.OrderItems'  is null.");
-          }
-            _context.OrderItems.Add(orderItem);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _orderItemsManager.ValidateAndAddOrderItem(orderItem);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
-            return CreatedAtAction("GetOrderItem", new { id = orderItem.OrderItemId }, orderItem);
+            return CreatedAtAction(nameof(GetOrderItem), new { id = orderItem.OrderItemId }, orderItem);
         }
 
         // DELETE: api/OrderItems/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrderItem(int id)
         {
-            if (_context.OrderItems == null)
+            try
+            {
+                await _orderItemsManager.DeleteOrderItemAsync(id);
+            }
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }
-            var orderItem = await _context.OrderItems.FindAsync(id);
-            if (orderItem == null)
-            {
-                return NotFound();
-            }
-
-            _context.OrderItems.Remove(orderItem);
-            await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool OrderItemExists(int id)
-        {
-            return (_context.OrderItems?.Any(e => e.OrderItemId == id)).GetValueOrDefault();
         }
     }
 }

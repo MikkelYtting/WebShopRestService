@@ -1,0 +1,44 @@
+name: IntegrationsTestManager CI
+
+on: [push]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: WebshopDatabase
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore WebShopRestService/WebShopRestService.csproj
+
+      - name: Apply migration.sql to MySQL
+        run: |
+          sudo apt-get install -y mysql-client
+          mysql -h127.0.0.1 -P3306 -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }} WebshopDatabase < WebShopRestService/Data/CreateScript.sql
+          mysql -h127.0.0.1 -P3306 -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }} WebshopDatabase < WebShopRestService/Data/InsertScript.sql
+
+      - name: Build
+        run: dotnet build --no-restore WebShopRestService/WebShopRestService.csproj
+
+      - name: Test
+        env:
+          TEST_CONNECTION_STRING: "Server=localhost;Database=WebshopDatabase;User ID=root;Password=${{ secrets.MYSQL_ROOT_PASSWORD }};SslMode=none;"
+        run: dotnet test --verbosity normal WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
+

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization; 
+﻿using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebShopRestService.Data;
+using WebShopRestService.Managers;
 using WebShopRestService.Models;
 
 namespace WebShopRestService.Controllers
@@ -11,11 +13,11 @@ namespace WebShopRestService.Controllers
     [Authorize(Roles = "Administrator")] // Apply authorization globally to all methods in the controller
     public class RolesController : ControllerBase
     {
-        private readonly MyDbContext _context;
+        private readonly RolesManager _rolesManager;
 
-        public RolesController(MyDbContext context)
+        public RolesController(RolesManager rolesManager)
         {
-            _context = context;
+            _rolesManager = rolesManager;
         }
 
         // GET: api/Roles
@@ -23,11 +25,8 @@ namespace WebShopRestService.Controllers
         [AllowAnonymous] // Allow anonymous access to this method
         public async Task<ActionResult<IEnumerable<Role>>> GetRoles()
         {
-            if (_context.Roles == null)
-            {
-                return NotFound();
-            }
-            return await _context.Roles.ToListAsync();
+            var roles = await _rolesManager.GetAll();
+            return Ok(roles);
         }
 
         // GET: api/Roles/5
@@ -35,11 +34,7 @@ namespace WebShopRestService.Controllers
         [AllowAnonymous] // Allow anonymous access to this method
         public async Task<ActionResult<Role>> GetRole(int id)
         {
-            if (_context.Roles == null)
-            {
-                return NotFound();
-            }
-            var role = await _context.Roles.FindAsync(id);
+            var role = await _rolesManager.Get(id);
 
             if (role == null)
             {
@@ -51,7 +46,6 @@ namespace WebShopRestService.Controllers
 
         // PUT: api/Roles/5
         [HttpPut("{id}")]
-        // No need to specify [Authorize] here since it's applied globally
         public async Task<IActionResult> PutRole(int id, Role role)
         {
             if (id != role.RoleId)
@@ -59,15 +53,13 @@ namespace WebShopRestService.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(role).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _rolesManager.Update(id, role);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RoleExists(id))
+                if (!await RoleExists(id))
                 {
                     return NotFound();
                 }
@@ -82,43 +74,30 @@ namespace WebShopRestService.Controllers
 
         // POST: api/Roles
         [HttpPost]
-        // No need to specify [Authorize] here since it's applied globally
         public async Task<ActionResult<Role>> PostRole(Role role)
         {
-            if (_context.Roles == null)
-            {
-                return Problem("Entity set 'MyDbContext.Roles'  is null.");
-            }
-            _context.Roles.Add(role);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetRole", new { id = role.RoleId }, role);
+            var createdRole = await _rolesManager.Create(role);
+            return CreatedAtAction(nameof(GetRole), new { id = createdRole.RoleId }, createdRole);
         }
 
         // DELETE: api/Roles/5
         [HttpDelete("{id}")]
-        // No need to specify [Authorize] here since it's applied globally
         public async Task<IActionResult> DeleteRole(int id)
         {
-            if (_context.Roles == null)
-            {
-                return NotFound();
-            }
-            var role = await _context.Roles.FindAsync(id);
+            var role = await _rolesManager.Get(id);
             if (role == null)
             {
                 return NotFound();
             }
 
-            _context.Roles.Remove(role);
-            await _context.SaveChangesAsync();
-
+            await _rolesManager.Delete(id);
             return NoContent();
         }
 
-        private bool RoleExists(int id)
+        private async Task<bool> RoleExists(int id)
         {
-            return (_context.Roles?.Any(e => e.RoleId == id)).GetValueOrDefault();
+            var role = await _rolesManager.Get(id);
+            return role != null;
         }
     }
 }

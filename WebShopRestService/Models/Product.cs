@@ -40,8 +40,10 @@ namespace WebShopRestService.Models
     {
         [AllowNull]
         public Category Category { get; set; }
-        [AllowNull]
+        [AllowNull]//we dont use this
         // Assuming there can be products not yet ordered
         public ICollection<OrderItem> OrderItems { get; set; }
     }
+
+
 }

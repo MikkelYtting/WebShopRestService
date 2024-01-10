@@ -5,6 +5,8 @@ using WebShopRestService.Data;
 using Microsoft.EntityFrameworkCore;
 using Neo4jClient;
 using WebShopRestService.Managers; // Ensure this namespace correctly references where your UserCredentialsManager is located.
+using WebShopRestService.Interfaces; // Namespace for your interfaces
+using WebShopRestService.Repositories; // Assuming this is the namespace for your repository implementations
 using WebShopRestService.Configurations;
 using WebShopRestService.Models.MongoDB;
 
@@ -42,6 +44,24 @@ builder.Services.AddSingleton<IGraphClient>(client);
 
 // Add the UserCredentialsManager to the services collection to manage user authentication tasks.
 builder.Services.AddScoped<UserCredentialsManager>();
+
+// Register additional managers here
+builder.Services.AddScoped<RolesManager>();
+builder.Services.AddScoped<ProductsManager>();
+builder.Services.AddScoped<OrderTablesManager>();
+builder.Services.AddScoped<OrderItemsManager>();
+builder.Services.AddScoped<CustomersManager>();
+builder.Services.AddScoped<CategoriesManager>();
+builder.Services.AddScoped<AddressesManager>();
+
+// Register the repository implementations for dependency injection
+builder.Services.AddScoped<IRolesRepository, RolesRepository>();
+builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
+builder.Services.AddScoped<IOrderTablesRepository, OrderTablesRepository>();
+builder.Services.AddScoped<IOrderItemsRepository, OrderItemsRepository>();
+builder.Services.AddScoped<ICustomersRepository, CustomersRepository>();
+builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+builder.Services.AddScoped<IAddressesRepository, AddressesRepository>();
 
 // Add Authentication services and configure JWT Bearer options.
 // This sets up the application to validate JWT tokens on incoming requests for secure endpoints.

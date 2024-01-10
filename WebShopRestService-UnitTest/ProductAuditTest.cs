@@ -2,6 +2,7 @@
 using WebShopRestService.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using System;
 
 [TestClass]
 public class ProductAuditTests
@@ -27,7 +28,7 @@ public class ProductAuditTests
     // Test cases for OldPrice and NewPrice
     [TestMethod]
     [DataRow(0.00)] // Minimum valid
-    [DataRow(500000.00)]
+    [DataRow(500000.00)] // Mid-range
     [DataRow(1000000.00)] // Maximum valid
     public void ProductAudit_WithValidPrices_ShouldPassValidation(double price)
     {
@@ -61,7 +62,8 @@ public class ProductAuditTests
     [TestMethod]
     public void ProductAudit_WithFutureChangeDate_ShouldFailValidation()
     {
-        var productAudit = CreateProductAudit(100.00m, 200.00m, DateTime.Now.AddDays(1), 1);
+        var futureDate = DateTime.Now.AddDays(1);
+        var productAudit = CreateProductAudit(100.00m, 200.00m, futureDate, 1);
         var result = TryValidateModel(productAudit, out var validationResults);
         Assert.IsFalse(result);
         Assert.IsTrue(validationResults.Count > 0);
@@ -70,8 +72,8 @@ public class ProductAuditTests
     // Test cases for ProductId
     [TestMethod]
     [DataRow(1)] // Minimum valid
-    [DataRow(100)]
-    [DataRow(int.MaxValue)] // Maximum valid integer
+    [DataRow(100)] // Mid-range
+    [DataRow(int.MaxValue)] // Maximum valid
     public void ProductAudit_WithValidProductId_ShouldPassValidation(int productId)
     {
         var productAudit = CreateProductAudit(100.00m, 200.00m, DateTime.Now, productId);
@@ -81,7 +83,7 @@ public class ProductAuditTests
     }
 
     [TestMethod]
-    [DataRow(0)] // Zero, might be invalid
+    [DataRow(0)] // Zero, invalid
     [DataRow(-1)] // Negative value, invalid
     public void ProductAudit_WithInvalidProductId_ShouldFailValidation(int productId)
     {
