@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using MongoDB.Bson;
 using WebShopRestService.Models.MongoDB;
+using System.Security.Authentication;
 
 namespace WebShopRestService.Repositories.MongoDB
 {
@@ -11,9 +12,13 @@ namespace WebShopRestService.Repositories.MongoDB
 
         public ProductsRepository(IOptions<MongoDBSettings> mongoDBSettings)
         {
-            MongoClient client = new MongoClient(mongoDBSettings.Value.ConnectionURI);
-            IMongoDatabase database = client.GetDatabase(mongoDBSettings.Value.DatabaseName);
-            _productsCollection = database.GetCollection<ProductMongo>(mongoDBSettings.Value.CollectionName);
+            var connectionString = mongoDBSettings.Value.ConnectionURI;
+            MongoClientSettings settings = MongoClientSettings.FromUrl(new MongoUrl(connectionString));
+            settings.SslSettings = new SslSettings() { EnabledSslProtocols = SslProtocols.Tls12 };
+            var mongoClient = new MongoClient(settings);
+            //MongoClient client = new MongoClient(mongoDBSettings.Value.ConnectionURI);
+            IMongoDatabase database = mongoClient.GetDatabase(mongoDBSettings.Value.DatabaseName);
+            _productsCollection = database.GetCollection<ProductMongo>("products");
         }
 
         public async Task CreateAsync(ProductMongo product)

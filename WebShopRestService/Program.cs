@@ -9,6 +9,7 @@ using WebShopRestService.Interfaces; // Namespace for your interfaces
 using WebShopRestService.Repositories; // Assuming this is the namespace for your repository implementations
 using WebShopRestService.Configurations;
 using WebShopRestService.Models.MongoDB;
+using Microsoft.Azure.Cosmos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +39,7 @@ builder.Services.AddDbContext<MyDbContext>(options =>
 
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
 
-var client = new BoltGraphClient(new Uri("bolt://localhost:7687"), "simonlm", "qwerty123");
+var client = new BoltGraphClient(new Uri("neo4j://node-yx3p4lne3fkeg.northeurope.cloudapp.azure.com:7687"), "neo4j", "Wxn44efbneo4j");
 client.ConnectAsync();
 builder.Services.AddSingleton<IGraphClient>(client);
 

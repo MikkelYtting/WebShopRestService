@@ -8,10 +8,10 @@ namespace WebShopRestService.Repositories.MongoDB
     public class AddressesRepository
     {
         private readonly IMongoCollection<AddressMongo> _addressesCollection;
-
+        
         public AddressesRepository(IOptions<MongoDBSettings> mongoDBSettings)
         {
-            MongoClient client = new MongoClient(mongoDBSettings.Value.ConnectionURI);
+            var client = new MongoClient(mongoDBSettings.Value.ConnectionURI);
             IMongoDatabase database = client.GetDatabase(mongoDBSettings.Value.DatabaseName);
             _addressesCollection = database.GetCollection<AddressMongo>("address");
         }
