@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebShopRestService.Data;
 using WebShopRestService.DTO;
 using WebShopRestService.Managers;
 using WebShopRestService.Models;
@@ -15,10 +17,13 @@ namespace WebShopRestService.Controllers
         private readonly ProductsManager _productsManager;
         private readonly IMapper _mapper;
 
-        public ProductsController(ProductsManager productsManager, IMapper mapper)
+        private readonly MyDbContext _spmanager;
+
+        public ProductsController(ProductsManager productsManager, IMapper mapper, MyDbContext ctx)
         {
             _productsManager = productsManager;
             _mapper = mapper;
+            _spmanager = ctx;
         }
 
         // GET: api/Products
@@ -31,6 +36,33 @@ namespace WebShopRestService.Controllers
                 return NotFound();
             }
             var results = _mapper.Map<IList<ProductDTO>>(products);
+            return Ok(results);
+        }
+
+        // GET: api/Products/lowQuantity
+        [HttpGet("lowQuantity")]
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetLowProducts()
+        {
+            var products = _spmanager.Products.FromSqlRaw("Execute dbo.get_products_with_low_quantity").AsEnumerable();
+
+            if (products == null)
+            {
+                return NotFound();
+            }
+            var results = _mapper.Map<IList<ProductDTO>>(products);
+            return Ok(results);
+        }
+        // GET: api/Products/sortByCategory
+        [HttpGet("sortByCategory")]
+        public async Task<ActionResult<IEnumerable<SortProductDTO>>> GetProductsByCategory()
+        {
+            var products = _spmanager.SortProducts.FromSqlRaw("EXEC GetProductsByCategory").AsEnumerable();
+
+            if (products == null)
+            {
+                return NotFound();
+            }
+            var results = _mapper.Map<IList<SortProductDTO>>(products);
             return Ok(results);
         }
 

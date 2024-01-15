@@ -7,9 +7,9 @@ using WebShopRestService.Models;
 
 namespace WebShopRestService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("sql/[controller]")]
     [ApiController]
-    [Authorize] // Require authentication for all methods
+    //[Authorize] // Require authentication for all methods
     public class AddressesController : ControllerBase
     {
         private readonly AddressesManager _addressesManager;
