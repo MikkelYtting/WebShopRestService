@@ -39,7 +39,7 @@ builder.Services.AddDbContext<MyDbContext>(options =>
 
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
 
-var client = new BoltGraphClient(new Uri("neo4j://node-yx3p4lne3fkeg.northeurope.cloudapp.azure.com:7687"), "neo4j", "Wxn44efbneo4j");
+var client = new BoltGraphClient(new Uri("neo4j://node-mstqwjz6lybhs.northeurope.cloudapp.azure.com:7687"), "neo4j", "H3fgdpd7abcd");
 client.ConnectAsync();
 builder.Services.AddSingleton<IGraphClient>(client);
 
