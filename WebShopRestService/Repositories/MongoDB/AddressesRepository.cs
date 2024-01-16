@@ -16,9 +16,9 @@ namespace WebShopRestService.Repositories.MongoDB
             _addressesCollection = database.GetCollection<AddressMongo>("address");
         }
 
-        public async Task CreateAsync(AddressMongo product)
+        public async Task CreateAsync(AddressMongo address)
         {
-            await _addressesCollection.InsertOneAsync(product);
+            await _addressesCollection.InsertOneAsync(address);
             return;
         }
 
@@ -30,7 +30,11 @@ namespace WebShopRestService.Repositories.MongoDB
         public async Task UpdateAsync(string id, AddressMongo address)
         {
             FilterDefinition<AddressMongo> filter = Builders<AddressMongo>.Filter.Eq("Id", id);
-            UpdateDefinition<AddressMongo> update = Builders<AddressMongo>.Update.Set(address => address, address);
+            UpdateDefinition<AddressMongo> update = Builders<AddressMongo>.Update
+                .Set(a => a.Street, address.Street)
+                .Set(a => a.City, address.City)
+                .Set(a => a.PostalCode, address.PostalCode)
+                .Set(a => a.Country, address.Country);
             await _addressesCollection.UpdateOneAsync(filter, update);
             return;
         }

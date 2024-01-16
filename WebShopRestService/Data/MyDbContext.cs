@@ -28,6 +28,15 @@ namespace WebShopRestService.Data
         {
             // Define any specific configurations for your entities here, if needed
             modelBuilder.Entity<SortProductDTO>().HasNoKey();
+            modelBuilder.Entity<Product>()
+                .ToTable(tb => tb.HasTrigger("trg_AuditProductPriceChange"));
+            modelBuilder.Entity<Category>()
+                .ToTable(tb => tb.HasTrigger("trg_PreventCategoryDeletion"));
+            modelBuilder.Entity<Payment>()
+                .ToTable(tb => tb.HasTrigger("trg_AuditPayment"));
+            modelBuilder.Entity<Payment>()
+                .ToTable(tb => tb.HasTrigger("after_payments"));
+
         }
     }
 }

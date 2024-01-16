@@ -81,7 +81,7 @@ namespace WebShopRestService.Controllers
         }
 
         // PUT: api/Products/5
-        [Authorize(Roles = "Administrator")]
+        //[Authorize(Roles = "Administrator")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, [FromBody] ProductDTO updates)
         {
