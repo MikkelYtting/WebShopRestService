@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebShopRestService.DTO;
 using WebShopRestService.Models;
 
 namespace WebShopRestService.Data
@@ -21,10 +22,12 @@ namespace WebShopRestService.Data
         public DbSet<ProductAudit> ProductAudits { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<PaymentAudit> PaymentAudits { get; set; }
+        public DbSet<SortProductDTO> SortProducts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Define any specific configurations for your entities here, if needed
+            modelBuilder.Entity<SortProductDTO>().HasNoKey();
         }
     }
 }

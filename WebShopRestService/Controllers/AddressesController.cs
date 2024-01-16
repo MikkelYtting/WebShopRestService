@@ -9,7 +9,7 @@ namespace WebShopRestService.Controllers
 {
     [Route("sql/[controller]")]
     [ApiController]
-   // [Authorize] // Require authentication for all methods
+    //[Authorize] // Require authentication for all methods
     public class AddressesController : ControllerBase
     {
         private readonly AddressesManager _addressesManager;
@@ -50,7 +50,7 @@ namespace WebShopRestService.Controllers
 
         // PUT: api/Addresses/5
         [HttpPut("{id}")]
-       // [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> PutAddress(int id, Address address)
         {
             if (id != address.AddressId)
@@ -72,7 +72,7 @@ namespace WebShopRestService.Controllers
 
         // POST: api/Addresses
         [HttpPost]
-       // [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Address>> PostAddress(Address address)
         {
             var createdAddress = await _addressesManager.CreateAddressAsync(address);
@@ -82,7 +82,7 @@ namespace WebShopRestService.Controllers
 
         // DELETE: api/Addresses/5
         [HttpDelete("{id}")]
-       // [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteAddress(int id)
         {
             var deleted = await _addressesManager.DeleteAddressAsync(id);
