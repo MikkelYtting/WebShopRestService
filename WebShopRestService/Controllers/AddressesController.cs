@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebShopRestService.Managers;
 using WebShopRestService.Models;
+using WebShopRestService.Models.Neo4j;
 
 namespace WebShopRestService.Controllers
 {
@@ -50,29 +51,44 @@ namespace WebShopRestService.Controllers
 
         // PUT: api/Addresses/5
         [HttpPut("{id}")]
-        [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> PutAddress(int id, Address address)
+        //[Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> PutAddress(int id, [FromBody] AddressDTO address)
         {
             if (id != address.AddressId)
             {
                 return BadRequest("Address ID mismatch.");
             }
-
-            try
-            {
-                await _addressesManager.UpdateAddressAsync(address);
-            }
-            catch (KeyNotFoundException)
+            
+            var addressToUpdate = await _addressesManager.GetAddressByIdAsync(id);
+            if (addressToUpdate == null)
             {
                 return NotFound($"Address with ID {id} not found.");
             }
 
-            return NoContent();
+            // Update the properties of the address
+            addressToUpdate.Street = address.Street;
+            addressToUpdate.City = address.City;
+            addressToUpdate.PostalCode = address.PostalCode;
+            addressToUpdate.Country = address.Country;
+
+            try
+            {
+                await _addressesManager.UpdateAddressAsync(addressToUpdate);
+            }
+            catch (Exception ex) // Catch more specific exception if possible
+            {
+                // Log the exception details
+                // e.g., _logger.LogError(ex, "Error updating address with ID {AddressId}", id);
+                return StatusCode(500, "An error occurred while updating the address.");
+            }
+
+            return Ok(addressToUpdate);
         }
+
 
         // POST: api/Addresses
         [HttpPost]
-        [Authorize(Roles = "Administrator")]
+       // [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Address>> PostAddress(Address address)
         {
             var createdAddress = await _addressesManager.CreateAddressAsync(address);
@@ -82,7 +98,7 @@ namespace WebShopRestService.Controllers
 
         // DELETE: api/Addresses/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Administrator")]
+       // [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteAddress(int id)
         {
             var deleted = await _addressesManager.DeleteAddressAsync(id);

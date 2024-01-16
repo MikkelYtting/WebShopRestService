@@ -9,6 +9,7 @@ using WebShopRestService.Data;
 using WebShopRestService.DTOs;
 using WebShopRestService.Models;
 using WebShopRestService.Managers;
+using WebShopRestService.Models.Neo4j;
 
 namespace WebShopRestService.Controllers
 {
@@ -88,16 +89,25 @@ namespace WebShopRestService.Controllers
             return userCredential;
         }
 
-        // Updates a specific user credential.
+        // PUT: api/UserCredentials/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserCredential(int id, UserCredential userCredential)
+        public async Task<IActionResult> PutUserCredential(int id, UserCredentialDTO updatedUserCredential)
         {
-            if (id != userCredential.UserId)
+            if (id != updatedUserCredential.UserId)
             {
-                return BadRequest();
+                return BadRequest("UserCredential ID mismatch.");
             }
 
-            _context.Entry(userCredential).State = EntityState.Modified;
+            var existingUserCredential = await _context.UserCredentials.FindAsync(id);
+            if (existingUserCredential == null)
+            {
+                return NotFound($"UserCredential with ID {id} not found.");
+            }
+
+            // Update the properties of the existing user credential
+            existingUserCredential.Username = updatedUserCredential.Username;
+            existingUserCredential.HashedPassword = updatedUserCredential.HashedPassword;
+            existingUserCredential.RoleId = updatedUserCredential.RoleId;
 
             try
             {
@@ -117,6 +127,7 @@ namespace WebShopRestService.Controllers
 
             return NoContent();
         }
+
 
         // Deletes a specific user credential.
         [HttpDelete("{id}")]

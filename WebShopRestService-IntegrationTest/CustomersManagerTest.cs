@@ -68,7 +68,7 @@ public class CustomersManagerTest
         int existingCustomerId = 1;
 
         // Act
-        Customer customer = await _manager.Get(existingCustomerId);
+        Customer customer = await _manager.GetCustomerByIdAsync(existingCustomerId);
 
         // Assert
         Assert.IsNotNull(customer, $"Kunde med ID {existingCustomerId} bør eksistere.");

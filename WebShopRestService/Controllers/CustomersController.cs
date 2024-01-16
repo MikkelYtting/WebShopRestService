@@ -7,6 +7,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WebShopRestService.Data;
 using WebShopRestService.Managers;
+using WebShopRestService.Interfaces;
 using WebShopRestService.Models;
 using WebShopRestService.Models.Neo4j;
 
@@ -43,7 +44,7 @@ namespace WebShopRestService.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Customer>> GetCustomer(int id)
         {
-            var customer = await _customersManager.Get(id);
+            var customer = await _customersManager.GetCustomerByIdAsync(id);
 
             if (customer == null)
             {
@@ -55,24 +56,39 @@ namespace WebShopRestService.Controllers
 
         // PUT: api/Customers/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomer(int id, Customer customer)
+        public async Task<IActionResult> PutCustomer(int id, [FromBody] CustomerDTO updatedCustomer)
         {
-            if (id != customer.CustomerId)
+            if (id != updatedCustomer.CustomerId)
             {
-                return BadRequest();
+                return BadRequest("Customer ID mismatch.");
             }
+
+            var existingCustomer = await _customersManager.GetCustomerByIdAsync(id);
+            if (existingCustomer == null)
+            {
+                return NotFound($"Customer with ID {id} not found.");
+            }
+
+            // Update the properties of the existing customer
+            existingCustomer.FirstName = updatedCustomer.FirstName;
+            existingCustomer.LastName = updatedCustomer.LastName;
+            existingCustomer.Email = updatedCustomer.Email;
+            existingCustomer.Phone = updatedCustomer.Phone;
 
             try
             {
-                await _customersManager.Update(id, customer);
+                await _customersManager.Update(id, existingCustomer);
             }
-            catch (KeyNotFoundException)
+            catch (Exception ex) // Catch more specific exception if possible
             {
-                return NotFound();
+                // Log the exception details
+                // e.g., _logger.LogError(ex, "Error updating customer with ID {CustomerId}", id);
+                return StatusCode(500, "An error occurred while updating the customer.");
             }
 
-            return NoContent();
+            return NoContent(); // You can also return Ok(existingCustomer) if you want to include the updated object in the response.
         }
+
 
         // POST: api/Customers
         [HttpPost]

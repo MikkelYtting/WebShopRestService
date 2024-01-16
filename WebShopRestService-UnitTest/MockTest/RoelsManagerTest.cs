@@ -54,7 +54,7 @@ namespace WebShopRestService_UnitTest.MockTest
             _mockRepo.Setup(repo => repo.GetRoleByIdAsync(roleIdToRetrieve)).ReturnsAsync(_mockRoles[0]);
 
             // Act
-            var result = await _manager.Get(roleIdToRetrieve);
+            var result = await _manager.GetRoleByIdAsync(roleIdToRetrieve);
 
             // Assert
             Assert.IsNotNull(result);
@@ -69,7 +69,7 @@ namespace WebShopRestService_UnitTest.MockTest
             _mockRepo.Setup(repo => repo.GetRoleByIdAsync(nonExistentRoleId)).ReturnsAsync((Role)null);
 
             // Act
-            var result = await _manager.Get(nonExistentRoleId);
+            var result = await _manager.GetRoleByIdAsync(nonExistentRoleId);
 
             // Assert
             Assert.IsNull(result);

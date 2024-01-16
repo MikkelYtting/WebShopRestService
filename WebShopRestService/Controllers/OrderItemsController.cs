@@ -49,16 +49,27 @@ namespace WebShopRestService.Controllers
 
         // PUT: api/OrderItems/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrderItem(int id, OrderItem orderItem)
+        public async Task<IActionResult> PutOrderItem(int id, [FromBody] OrderItemDTO updatedOrderItem)
         {
-            if (id != orderItem.OrderItemId)
+            if (id != updatedOrderItem.OrderItemId)
             {
-                return BadRequest();
+                return BadRequest("OrderItem ID mismatch.");
             }
+
+            var existingOrderItem = await _orderItemsManager.GetOrderItemByIdAsync(id);
+            if (existingOrderItem == null)
+            {
+                return NotFound($"OrderItem with ID {id} not found.");
+            }
+
+            // Update the properties of the existing order item
+            existingOrderItem.Quantity = updatedOrderItem.Quantity;
+            existingOrderItem.Price = updatedOrderItem.Price;
+            existingOrderItem.OrderId = updatedOrderItem.OrderId;
 
             try
             {
-                await _orderItemsManager.UpdateOrderItemAsync(orderItem);
+                await _orderItemsManager.UpdateOrderItemAsync(existingOrderItem);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -75,6 +86,7 @@ namespace WebShopRestService.Controllers
 
             return NoContent();
         }
+
 
         // POST: api/OrderItems
         [HttpPost]

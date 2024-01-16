@@ -24,7 +24,7 @@ builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.OrderItems
 
 var jwtConfigSection = builder.Configuration.GetSection("JwtConfig");
 builder.Services.Configure<JwtConfig>(jwtConfigSection);
-var jwtConfig = jwtConfigSection.Get<JwtConfig>(); // Get the JwtConfig instance with the bound settings.
+var jwtConfig = jwtConfigSection.Get<JwtConfig>(); // GetCustomerByIdAsync the JwtConfig instance with the bound settings.
 if (string.IsNullOrEmpty(jwtConfig.Secret))
 {
     throw new InvalidOperationException("JWT key is not configured properly.");

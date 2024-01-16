@@ -5,12 +5,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebShopRestService.Managers;
 using WebShopRestService.Models;
+using WebShopRestService.Models.Neo4j;
 
 namespace WebShopRestService.Controllers
 {
     [Route("sql/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Administrator")] // Apply authorization globally to all methods in the controller
+    //[Authorize(Roles = "Administrator")] // Apply authorization globally to all methods in the controller
     public class RolesController : ControllerBase
     {
         private readonly RolesManager _rolesManager;
@@ -34,7 +35,7 @@ namespace WebShopRestService.Controllers
         [AllowAnonymous] // Allow anonymous access to this method
         public async Task<ActionResult<Role>> GetRole(int id)
         {
-            var role = await _rolesManager.Get(id);
+            var role = await _rolesManager.GetRoleByIdAsync(id);
 
             if (role == null)
             {
@@ -46,16 +47,26 @@ namespace WebShopRestService.Controllers
 
         // PUT: api/Roles/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRole(int id, Role role)
+        public async Task<IActionResult> PutRole(int id, RoleDTO updatedRole)
         {
-            if (id != role.RoleId)
+            if (id != updatedRole.RoleId)
             {
-                return BadRequest();
+                return BadRequest("Role ID mismatch.");
             }
+
+            var existingRole = await _rolesManager.GetRoleByIdAsync(id);
+            if (existingRole == null)
+            {
+                return NotFound($"Role with ID {id} not found.");
+            }
+
+            // Update the properties of the existing role
+            existingRole.Name = updatedRole.Name;
+            existingRole.AccessLevel = updatedRole.AccessLevel;
 
             try
             {
-                await _rolesManager.Update(id, role);
+                await _rolesManager.Update(id, existingRole);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -72,6 +83,7 @@ namespace WebShopRestService.Controllers
             return NoContent();
         }
 
+
         // POST: api/Roles
         [HttpPost]
         public async Task<ActionResult<Role>> PostRole(Role role)
@@ -84,7 +96,7 @@ namespace WebShopRestService.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRole(int id)
         {
-            var role = await _rolesManager.Get(id);
+            var role = await _rolesManager.GetRoleByIdAsync(id);
             if (role == null)
             {
                 return NotFound();
@@ -96,7 +108,7 @@ namespace WebShopRestService.Controllers
 
         private async Task<bool> RoleExists(int id)
         {
-            var role = await _rolesManager.Get(id);
+            var role = await _rolesManager.GetRoleByIdAsync(id);
             return role != null;
         }
     }

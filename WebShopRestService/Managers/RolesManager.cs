@@ -20,7 +20,7 @@ namespace WebShopRestService.Managers
             return await _rolesRepository.GetAllRolesAsync();
         }
 
-        public async Task<Role> Get(int id)
+        public async Task<Role> GetRoleByIdAsync(int id)
         {
             return await _rolesRepository.GetRoleByIdAsync(id);
         }

@@ -49,24 +49,37 @@ namespace WebShopRestService.Controllers
 
         // PUT: api/Categories/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory(int id, Category category)
+        public async Task<IActionResult> PutCategory(int id, [FromBody] CategoryDTO updatedCategory)
         {
-            if (id != category.CategoryId)
+            if (id != updatedCategory.CategoryId)
             {
-                return BadRequest();
+                return BadRequest("Category ID mismatch.");
             }
+
+            var existingCategory = await _categoriesManager.GetCategoryByIdAsync(id);
+            if (existingCategory == null)
+            {
+                return NotFound($"Category with ID {id} not found.");
+            }
+
+            // Update the properties of the existing category
+            existingCategory.Name = updatedCategory.Name;
+            existingCategory.Description = updatedCategory.Description;
 
             try
             {
-                await _categoriesManager.UpdateCategoryAsync(category);
+                await _categoriesManager.UpdateCategoryAsync(existingCategory);
             }
-            catch (KeyNotFoundException)
+            catch (Exception ex) // Catch more specific exception if possible
             {
-                return NotFound();
+                // Log the exception details
+                // e.g., _logger.LogError(ex, "Error updating category with ID {CategoryId}", id);
+                return StatusCode(500, "An error occurred while updating the category.");
             }
 
-            return NoContent();
+            return NoContent(); // You can also return Ok(existingCategory) if you want to include the updated object in the response.
         }
+
 
         // POST: api/Categories
         [HttpPost]

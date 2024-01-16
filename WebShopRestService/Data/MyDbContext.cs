@@ -24,10 +24,17 @@ namespace WebShopRestService.Data
         public DbSet<PaymentAudit> PaymentAudits { get; set; }
         public DbSet<SortProductDTO> SortProducts { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Define any specific configurations for your entities here, if needed
             modelBuilder.Entity<SortProductDTO>().HasNoKey();
+            modelBuilder.Entity<Product>()
+                .ToTable(tb => tb.HasTrigger("trg_AuditProductPriceChange"));
+            modelBuilder.Entity<Product>()
+                .ToTable(tb => tb.HasTrigger("AfterProductUpdates"));
+            modelBuilder.Entity<OrderItem>()
+                .ToTable(tb => tb.HasTrigger("UpdateOrderTotal"));
         }
     }
 }

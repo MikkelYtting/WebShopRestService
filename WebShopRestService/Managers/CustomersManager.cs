@@ -20,9 +20,9 @@ namespace WebShopRestService.Managers
             return await _customersRepository.GetAllCustomersAsync();
         }
 
-        public async Task<Customer> Get(int id)
+        public async Task<Customer> GetCustomerByIdAsync(int categoryid)
         {
-            return await _customersRepository.GetCustomerByIdAsync(id);
+            return await _customersRepository.GetCustomerByIdAsync(categoryid);
         }
 
         public async Task Update(int id, Customer customer)

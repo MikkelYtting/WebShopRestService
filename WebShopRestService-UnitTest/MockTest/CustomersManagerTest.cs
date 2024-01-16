@@ -75,7 +75,7 @@ namespace WebShopRestService_UnitTest.MockTest
             _mockRepo.Setup(repo => repo.GetCustomerByIdAsync(1)).ReturnsAsync(customer);
 
             // Act
-            var result = await _manager.Get(1);
+            var result = await _manager.GetCustomerByIdAsync(1);
 
             // Assert
             Assert.AreEqual(customer, result);
@@ -153,7 +153,7 @@ namespace WebShopRestService_UnitTest.MockTest
             _mockRepo.Setup(repo => repo.GetCustomerByIdAsync(It.IsAny<int>())).ReturnsAsync((Customer)null);
 
             // Act
-            var result = await _manager.Get(99); // Assuming 99 is a non-existent ID
+            var result = await _manager.GetCustomerByIdAsync(99); // Assuming 99 is a non-existent ID
 
             // Assert
             Assert.IsNull(result);
@@ -167,7 +167,7 @@ namespace WebShopRestService_UnitTest.MockTest
             _mockRepo.Setup(repo => repo.GetCustomerByIdAsync(nonExistentCustomerId)).ReturnsAsync((Customer)null);
 
             // Act
-            var result = await _manager.Get(nonExistentCustomerId);
+            var result = await _manager.GetCustomerByIdAsync(nonExistentCustomerId);
 
             // Assert
             Assert.IsNull(result);

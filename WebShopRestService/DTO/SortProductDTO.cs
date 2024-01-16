@@ -30,7 +30,7 @@ namespace WebShopRestService.DTO
         public int StockQuantity { get; set; }
 
         [Required(ErrorMessage = "Category ID is required.")]
-        public int CategoryID { get; set; }
+        public int CategoryId { get; set; }
 
         public string CategoryName { get; set; }
         public string CategoryDescription { get; set; }

@@ -57,7 +57,7 @@ namespace WebShopRestService.Controllers
         [HttpGet("sortByCategory")]
         public async Task<ActionResult<IEnumerable<SortProductDTO>>> GetProductsByCategory()
         {
-            var products = _spmanager.SortProducts.FromSqlRaw("EXEC GetProductsByCategory").AsEnumerable();
+            var products = _spmanager.SortProducts.FromSqlRaw("Execute GetProductsByCategory").AsEnumerable();
 
             if (products == null)
             {
@@ -81,7 +81,7 @@ namespace WebShopRestService.Controllers
         }
 
         // PUT: api/Products/5
-        [Authorize(Roles = "Administrator")]
+        //[Authorize(Roles = "Administrator")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, [FromBody] ProductDTO updates)
         {
