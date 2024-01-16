@@ -1,24 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebShopRestService.Data;
 using WebShopRestService.DTO;
 using WebShopRestService.Managers;
 using WebShopRestService.Models;
 
 namespace WebShopRestService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("sql/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
         private readonly ProductsManager _productsManager;
         private readonly IMapper _mapper;
 
-        public ProductsController(ProductsManager productsManager, IMapper mapper)
+        private readonly MyDbContext _spmanager;
+
+        public ProductsController(ProductsManager productsManager, IMapper mapper, MyDbContext ctx)
         {
             _productsManager = productsManager;
             _mapper = mapper;
+            _spmanager = ctx;
         }
 
         // GET: api/Products
@@ -31,6 +37,33 @@ namespace WebShopRestService.Controllers
                 return NotFound();
             }
             var results = _mapper.Map<IList<ProductDTO>>(products);
+            return Ok(results);
+        }
+
+        // GET: api/Products/lowQuantity
+        [HttpGet("lowQuantity")]
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetLowProducts()
+        {
+            var products = _spmanager.Products.FromSqlRaw("Execute dbo.get_products_with_low_quantity").AsEnumerable();
+
+            if (products == null)
+            {
+                return NotFound();
+            }
+            var results = _mapper.Map<IList<ProductDTO>>(products);
+            return Ok(results);
+        }
+        // GET: api/Products/sortByCategory
+        [HttpGet("sortByCategory")]
+        public async Task<ActionResult<IEnumerable<SortProductDTO>>> GetProductsByCategory()
+        {
+            var products = _spmanager.SortProducts.FromSqlRaw("EXEC GetProductsByCategory").AsEnumerable();
+
+            if (products == null)
+            {
+                return NotFound();
+            }
+            var results = _mapper.Map<IList<SortProductDTO>>(products);
             return Ok(results);
         }
 
@@ -48,6 +81,7 @@ namespace WebShopRestService.Controllers
         }
 
         // PUT: api/Products/5
+        [Authorize(Roles = "Administrator")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, [FromBody] ProductDTO updates)
         {
@@ -61,11 +95,17 @@ namespace WebShopRestService.Controllers
             {
                 return NotFound();
             }
+            productToUpdate.Name = updates.Name;
+            productToUpdate.Description = updates.Description;
+            productToUpdate.Img = updates.Img;
+            productToUpdate.Price = updates.Price;
+            productToUpdate.StockQuantity = updates.StockQuantity;
+            productToUpdate.CategoryId = updates.CategoryId;
 
-            _mapper.Map(updates, productToUpdate);
+            //_mapper.Map(updates, productToUpdate);
             await _productsManager.Update(id, productToUpdate);
 
-            return NoContent();
+            return Ok(productToUpdate);
         }
 
         // POST: api/Products

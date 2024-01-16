@@ -1,21 +1,28 @@
 ﻿using System.Collections.Generic;
+
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using WebShopRestService.Data;
 using WebShopRestService.Managers;
 using WebShopRestService.Models;
+using WebShopRestService.Models.Neo4j;
 
 namespace WebShopRestService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("sql/[controller]")]
     [ApiController]
     public class CustomersController : ControllerBase
     {
         private readonly CustomersManager _customersManager;
+        private readonly MyDbContext _spmanager;
 
-        public CustomersController(CustomersManager customersManager)
+        public CustomersController(CustomersManager customersManager, MyDbContext ctx)
         {
             _customersManager = customersManager;
+            _spmanager = ctx;
         }
 
         // GET: api/Customers
@@ -75,6 +82,29 @@ namespace WebShopRestService.Controllers
 
             return CreatedAtAction(nameof(GetCustomer), new { id = createdCustomer.CustomerId }, createdCustomer);
         }
+        
+        // POST: api/Customers/register
+        [HttpPost("register")]
+        public async Task<ActionResult<RegisterCustomer>> Register(RegisterCustomer customer)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@FirstName", customer.FirstName),
+                new SqlParameter("@LastName", customer.LastName),
+                new SqlParameter("@Email", customer.Email),
+                new SqlParameter("@Phone", customer.Phone),
+                new SqlParameter("@Street", customer.Street),
+                new SqlParameter("@City", customer.City),
+                new SqlParameter("@PostalCode", customer.PostalCode),
+                new SqlParameter("@Country", customer.Country),
+                new SqlParameter("@Username", customer.Username),
+                new SqlParameter("@Password", customer.Password)
+            };
+
+            // Execute the stored procedure
+            await _spmanager.Database.ExecuteSqlRawAsync("EXEC RegisterCustomer @FirstName, @LastName, @Email, @Phone, @Street, @City, @PostalCode, @Country, @Username, @Password", parameters);
+            return CreatedAtAction(nameof(GetCustomer), new { id = customer.Email }, customer);
+        }
 
         // DELETE: api/Customers/5
         [HttpDelete("{id}")]
@@ -91,5 +121,6 @@ namespace WebShopRestService.Controllers
 
             return NoContent();
         }
+
     }
 }

@@ -8,7 +8,7 @@ using WebShopRestService.Models;
 
 namespace WebShopRestService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("sql/[controller]")]
     [ApiController]
     [Authorize(Roles = "Administrator")] // Apply authorization globally to all methods in the controller
     public class RolesController : ControllerBase

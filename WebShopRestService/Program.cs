@@ -3,12 +3,24 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebShopRestService.Data;
 using Microsoft.EntityFrameworkCore;
+using Neo4jClient;
 using WebShopRestService.Managers; // Ensure this namespace correctly references where your UserCredentialsManager is located.
 using WebShopRestService.Interfaces; // Namespace for your interfaces
 using WebShopRestService.Repositories; // Assuming this is the namespace for your repository implementations
 using WebShopRestService.Configurations;
+using WebShopRestService.Models.MongoDB;
+using Microsoft.Azure.Cosmos;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDB"));
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.ProductsRepository>();
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.CategoriesRepository>();
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.OrderTablesRepository>();
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.RolesRepository>();
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.AddressesRepository>();
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.CustomersRepository>();
+builder.Services.AddSingleton<WebShopRestService.Repositories.MongoDB.OrderItemsRepository>();
 
 var jwtConfigSection = builder.Configuration.GetSection("JwtConfig");
 builder.Services.Configure<JwtConfig>(jwtConfigSection);
@@ -26,6 +38,10 @@ builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbConnection")));
 
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
+
+var client = new BoltGraphClient(new Uri("neo4j://node-yx3p4lne3fkeg.northeurope.cloudapp.azure.com:7687"), "neo4j", "Wxn44efbneo4j");
+client.ConnectAsync();
+builder.Services.AddSingleton<IGraphClient>(client);
 
 // Add the UserCredentialsManager to the services collection to manage user authentication tasks.
 builder.Services.AddScoped<UserCredentialsManager>();
