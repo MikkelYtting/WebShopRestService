@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebShopRestService.Data;
@@ -80,6 +81,7 @@ namespace WebShopRestService.Controllers
         }
 
         // PUT: api/Products/5
+        [Authorize(Roles = "Administrator")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, [FromBody] ProductDTO updates)
         {
@@ -93,11 +95,17 @@ namespace WebShopRestService.Controllers
             {
                 return NotFound();
             }
+            productToUpdate.Name = updates.Name;
+            productToUpdate.Description = updates.Description;
+            productToUpdate.Img = updates.Img;
+            productToUpdate.Price = updates.Price;
+            productToUpdate.StockQuantity = updates.StockQuantity;
+            productToUpdate.CategoryId = updates.CategoryId;
 
-            _mapper.Map(updates, productToUpdate);
+            //_mapper.Map(updates, productToUpdate);
             await _productsManager.Update(id, productToUpdate);
 
-            return NoContent();
+            return Ok(productToUpdate);
         }
 
         // POST: api/Products
