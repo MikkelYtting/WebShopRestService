@@ -23,9 +23,19 @@ public class OrderItemsManagerTest
         var connectionString = Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING")
                         ?? "Server=localhost;Database=Webshop;Uid=root;Pwd=1234;";
 
-        var options = new DbContextOptionsBuilder<MyDbContext>()
-                   .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-                   .Options;
+        var optionsBuilder = new DbContextOptionsBuilder<MyDbContext>();
+
+        if (!string.IsNullOrEmpty(connectionString))
+        {
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        }
+        else
+        {
+            connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+
+        var options = optionsBuilder.Options;
 
         _context = new MyDbContext(options);
         _orderItemRepository = new OrderItemsRepository(_context);
