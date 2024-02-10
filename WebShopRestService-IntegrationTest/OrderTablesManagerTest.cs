@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -28,18 +29,6 @@ public class OrderTablesManagerTests
         var options = new DbContextOptionsBuilder<MyDbContext>()
             .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
             .Options;
-
-        if (!string.IsNullOrEmpty(connectionString))
-        {
-            // Use MySQL when TEST_CONNECTION_STRING is provided
-            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-        }
-        else
-        {
-            // Fallback to local MSSQL connection string
-            connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebshopDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
-            optionsBuilder.UseSqlServer(connectionString);
-        }
 
 
         _context = new MyDbContext(options);
