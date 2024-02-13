@@ -9,7 +9,7 @@ namespace WebShopRestService.Models
         public int AddressId { get; set; }
 
         [Required(ErrorMessage = "Street name is required.")]
-        [StringLength(100, ErrorMessage = "Street name cannot be longer than 100 characters.")]
+        [StringLength(50, ErrorMessage = "Street name cannot be longer than 100 characters.")]
         [RegularExpression(@"^[a-zA-Z0-9\s,.'-]{3,}$", ErrorMessage = "Invalid street name format.")]
         public string? Street { get; set; }
 
