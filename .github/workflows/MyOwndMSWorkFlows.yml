@@ -19,7 +19,6 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-
     steps:
       - uses: actions/checkout@v2
 
@@ -35,24 +34,20 @@ jobs:
           dotnet restore WebShopRestService-UnitTest/WebShopRestService-UnitTest.csproj
           
           
-
       - name: Apply migration.sql to MySQL
         run: |
           sudo apt-get install -y mysql-client
           mysql -h127.0.0.1 -P3306 -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }} WebshopDatabase < WebShopRestService/Data/CreateScript.sql
           mysql -h127.0.0.1 -P3306 -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }} WebshopDatabase < WebShopRestService/Data/InsertScript.sql
-
       - name: Install SonarScanner and Coverlet
         run: |
           dotnet tool install --global dotnet-sonarscanner
           dotnet tool install --global coverlet.console
-
       - name: Begin SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet sonarscanner begin /k:"MikkelYtting_WebShopRestService" /o:"mikkelytting" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
-
       - name: Build
         run: dotnet build --no-restore WebShopRestService/WebShopRestService.csproj
 
@@ -69,7 +64,6 @@ jobs:
           dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover WebShopRestService-IntegrationTest/WebShopRestService-IntegrationTest.csproj
           dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover WebShopRestService-UnitTest/WebShopRestService-UnitTest.csproj
           
-
       - name: End SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
