@@ -26,5 +26,4 @@ jobs:
     # Run unit tests
     - name: Run unit tests
       run: dotnet test WebShopRestService-UnitTest/WebShopRestService-UnitTest.csproj --no-build --configuration Release -v n
-
     
